@@ -37,6 +37,7 @@ public class FileIndexer implements Runnable {
 			if (useStemming) {
 				word = stem(word);
 			}
+			word = word.toLowerCase();
 			if (!out.containsKey(word)) {
 				out.put(word, new Vector<String>());
 			}
