@@ -12,6 +12,7 @@ public class Main {
 	
 	private static ExecutorService executorService;
 	private static Hashtable<String, Vector<String>> out;
+	private static int numDocs = 0;
 	
 	/**
 	 * @param args
@@ -44,6 +45,7 @@ public class Main {
 	public static void traverseDir(File currentFile) {
 		if (!currentFile.isDirectory()) {
 			executorService.execute(new FileIndexer(currentFile, true, out));
+			numDocs++;
 		}
 		if (currentFile.list() != null) { 
 			for (String fileName : currentFile.list()) {
