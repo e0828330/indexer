@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -50,9 +49,6 @@ public class Indexer {
 		
 		// Create Posting lists
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-		
-		ArrayList<String> terms = new ArrayList<String>(mapOut.keySet());
-		Collections.sort(terms);
 
 		// TODO: don't ignore thresholds
 		for(String term : mapOut.keySet()) {
