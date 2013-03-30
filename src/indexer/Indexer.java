@@ -5,11 +5,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instances;
+import weka.core.Instance;
+import weka.core.converters.ArffSaver;
+import weka.filters.Filter;
+import weka.filters.unsupervised.instance.NonSparseToSparse;
 
 public class Indexer {
 
@@ -20,6 +30,7 @@ public class Indexer {
 	private Hashtable<String, ArrayList<Posting>> index;
 	private int numDocs = 0;
 	private ArrayList<String> docIds = new ArrayList<String>();
+	private HashSet<String> classes = new HashSet<String>();
 	
 	public Indexer(String targetDirectory) {
 		this.targetDirectory = targetDirectory;
@@ -81,11 +92,12 @@ public class Indexer {
 						   + (System.currentTimeMillis() - startTime) + "ms ");
 		
 	}
-	
+
 	private void traverseDir(File currentFile) {
 		if (!currentFile.isDirectory()) {
 			executorService.execute(new FileIndexer(currentFile, true, mapOut));
 			docIds.add(currentFile.getParentFile().getName() + "/" + currentFile.getName());
+			classes.add(currentFile.getParentFile().getName()); //build a list of classes
 			numDocs++;
 		}
 		if (currentFile.list() != null) { 
@@ -93,6 +105,64 @@ public class Indexer {
 				traverseDir(new File(currentFile, fileName));
 			}
 		}
+	}
+
+	public void buildARFF(String filename) {
+		Instances data;
+		FastVector attributes = new FastVector();
+		FastVector docClasses = new FastVector(classes.size());
+
+		for (String className : classes) {
+			docClasses.addElement(className);
+		}
+		attributes.addElement(new Attribute("documentClass", docClasses));
+		attributes.addElement(new Attribute("documentName", (FastVector) null));
+		
+		HashMap<String, HashMap<Integer, Double>> bagOfWords = new HashMap<String, HashMap<Integer, Double>>();
+		
+		int i = 2;
+		for (String term : index.keySet()) {
+			attributes.addElement(new Attribute(term));
+			for (Posting p : index.get(term)) {
+				if (!bagOfWords.containsKey(p.getDocId())) {
+					bagOfWords.put(p.getDocId(), new HashMap<Integer, Double>());
+				}
+				bagOfWords.get(p.getDocId()).put(i, p.getWeight());
+			}
+			i++;
+		}
+		
+		data = new Instances("index", attributes, 0);
+		double[] values;
+		for (String entry : bagOfWords.keySet()) {
+			values = new double[data.numAttributes()];
+			String[] tmp = entry.split("/");
+			values[0] = docClasses.indexOf(tmp[0]);
+			values[1] = data.attribute(1).addStringValue(tmp[1]);
+			HashMap<Integer, Double> list = bagOfWords.get(entry);
+			for (Integer idx : list.keySet()) {
+				values[idx] = list.get(idx);
+			}
+			data.add(new Instance(1.0, values));
+		}
+		
+		
+		try {
+			NonSparseToSparse nonSparseToSparseInstance = new NonSparseToSparse(); 
+			nonSparseToSparseInstance.setInputFormat(data);
+			Instances sparseDataset = Filter.useFilter(data, nonSparseToSparseInstance);
+
+			//System.out.println(sparseDataset);
+			
+			ArffSaver arffSaverInstance = new ArffSaver(); 
+			arffSaverInstance.setInstances(sparseDataset); 
+			arffSaverInstance.setFile(new File(filename)); 
+			arffSaverInstance.writeBatch();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
 	}
 	
 }

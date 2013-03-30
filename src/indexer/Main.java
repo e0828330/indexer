@@ -8,6 +8,7 @@ public class Main {
 
 		Indexer idx = new Indexer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/");
 		idx.buildIndex(2, 15);
+		idx.buildARFF("/tmp/test.arff");
 	}
 
 }
