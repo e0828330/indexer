@@ -7,7 +7,7 @@ public class Main {
 		// TODO: Parse cmdline arguments
 
 		Indexer idx = new Indexer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/");
-		idx.buildIndex(0, 15);
+		idx.buildIndex(2, 15);
 	}
 
 }

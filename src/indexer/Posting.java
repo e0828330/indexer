@@ -4,7 +4,7 @@ public class Posting {
 
 	private String docId;
 	private int tf = 0;
-	private int weight = 0;
+	private double weight = 0.; // TF-IDF
 	
 	public Posting(String docId) {
 		this.setDocId(docId);
@@ -22,11 +22,11 @@ public class Posting {
 		this.tf++;
 	}
 	
-	public int getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(int weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 

@@ -52,7 +52,7 @@ public class Indexer {
 		executorService = Executors.newFixedThreadPool(maxThreads);
 
 		for(String term : mapOut.keySet()) {
-			executorService.execute(new Inverter(mapOut, index, term, minThreshold, maxThreshold));
+			executorService.execute(new Inverter(mapOut, index, term, minThreshold, maxThreshold, numDocs));
 		}
 
 		// Wait for all threads to finish
@@ -67,7 +67,7 @@ public class Indexer {
 			for(String term : index.keySet()) {
 				out.write(term + " : ");
 				for (Posting p : index.get(term)) {
-					out.write("(" + p.getDocId() + ", " + p.getTf() + "), ");
+					out.write("(" + p.getDocId() + ", " + p.getTf() + ", " + p.getWeight() + "), ");
 				}
 				out.write("\n");
 			}
