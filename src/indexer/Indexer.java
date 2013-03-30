@@ -34,6 +34,9 @@ public class Indexer {
 	 * @throws InterruptedException
 	 */
 	public void buildIndex(int minThreshold, int maxThreshold) throws InterruptedException {
+		
+		Long startTime = System.currentTimeMillis();
+		
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		mapOut = new Hashtable<String, Vector<String>>();
 		index = new Hashtable<String, ArrayList<Posting>>();
@@ -79,7 +82,8 @@ public class Indexer {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Done indexing " + numDocs + " documents.");
+		System.out.println("Done indexing " + numDocs + " documents in " 
+						   + (System.currentTimeMillis() - startTime) + "ms ");
 		
 	}
 	
