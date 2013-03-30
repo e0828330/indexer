@@ -12,12 +12,27 @@ public class Inverter implements Runnable {
 	private Hashtable<String, ArrayList<Posting>> index;
 	private Hashtable<String, Vector<String>> input;
 	
+	private int maxThreshold;
+	private int minThreshold;
+	
+	/**
+	 * Inverter thread run in the "reduce" phase
+	 * 
+	 * @param input
+	 * @param index
+	 * @param term
+	 * @param minThreshold
+	 * @param maxThreshold
+	 */
 	public Inverter(Hashtable<String, Vector<String>> input, 
-					Hashtable<String, ArrayList<Posting>> index, String term) {
+					Hashtable<String, ArrayList<Posting>> index, String term,
+					int minThreshold, int maxThreshold) {
 		
 		this.term = term;
 		this.input = input;
 		this.index = index;
+		this.minThreshold = minThreshold;
+		this.maxThreshold = maxThreshold;
 	}
 	
 	@Override
@@ -34,9 +49,16 @@ public class Inverter implements Runnable {
 		ArrayList<String> docIds = new ArrayList<String>(pList.keySet());
 		Collections.sort(docIds);
 		for (String docId : docIds) {
+			int tf = pList.get(docId).getTf();
+			if (tf < minThreshold)
+				continue;
+			if (maxThreshold != -1 && tf > maxThreshold)
+				continue;
 			result.add(pList.get(docId));
 		}
-		index.put(term, result);
+		if (!result.isEmpty()) {
+			index.put(term, result);
+		}
 	}
 
 }

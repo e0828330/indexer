@@ -35,8 +35,9 @@ public class Indexer {
 	public void buildIndex(int minThreshold, int maxThreshold) throws InterruptedException {
 		
 		Long startTime = System.currentTimeMillis();
+		int maxThreads = Runtime.getRuntime().availableProcessors();
 		
-		executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		executorService = Executors.newFixedThreadPool(maxThreads);
 		mapOut = new Hashtable<String, Vector<String>>();
 		index = new Hashtable<String, ArrayList<Posting>>();
 
@@ -48,11 +49,10 @@ public class Indexer {
 		executorService = null;
 		
 		// Create Posting lists
-		executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		executorService = Executors.newFixedThreadPool(maxThreads);
 
-		// TODO: don't ignore thresholds
 		for(String term : mapOut.keySet()) {
-			executorService.execute(new Inverter(mapOut, index, term));
+			executorService.execute(new Inverter(mapOut, index, term, minThreshold, maxThreshold));
 		}
 
 		// Wait for all threads to finish
@@ -74,7 +74,6 @@ public class Indexer {
 			out.close();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
