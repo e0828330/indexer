@@ -23,7 +23,7 @@ public class FileIndexer implements Runnable {
 	public FileIndexer(File file, boolean useStemming, Hashtable<String, Vector<String>> out) {
 		this.out = out;
 		this.filename = file.getAbsolutePath();
-		this.docId = file.getName();
+		this.docId = file.getParentFile().getName() + "/" + file.getName();
 		this.useStemming = useStemming;
 	}
 	
