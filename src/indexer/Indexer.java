@@ -31,6 +31,7 @@ public class Indexer {
 	private int numDocs = 0;
 	private ArrayList<String> docIds = new ArrayList<String>();
 	private HashSet<String> classes = new HashSet<String>();
+	private HashMap<String, HashMap<Integer, Double>> documentVectors;
 	
 	public Indexer(String targetDirectory) {
 		this.targetDirectory = targetDirectory;
@@ -70,7 +71,7 @@ public class Indexer {
 		executorService.shutdown();
 		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 		executorService = null;
-
+		
 		// Write result to text file for debugging
 		try {
 			FileWriter fstream = new FileWriter("/tmp/debug.txt");
@@ -86,6 +87,19 @@ public class Indexer {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		// Build the document vectors
+		documentVectors = new HashMap<String, HashMap<Integer, Double>>();
+		int i = 0;
+		for (String term : index.keySet()) {
+			for (Posting p : index.get(term)) {
+				if (!documentVectors.containsKey(p.getDocId())) {
+					documentVectors.put(p.getDocId(), new HashMap<Integer, Double>());
+				}
+				documentVectors.get(p.getDocId()).put(i, p.getWeight());
+			}
+			i++;
 		}
 		
 		System.out.println("Done indexing " + numDocs + " documents in " 
@@ -107,6 +121,11 @@ public class Indexer {
 		}
 	}
 
+	/**
+	 * Create an ARFF file containing the index as document vectors
+	 * 
+	 * @param filename
+	 */
 	public void buildARFF(String filename) {
 		Instances data;
 		FastVector attributes = new FastVector();
@@ -118,30 +137,22 @@ public class Indexer {
 		attributes.addElement(new Attribute("documentClass", docClasses));
 		attributes.addElement(new Attribute("documentName", (FastVector) null));
 		
-		HashMap<String, HashMap<Integer, Double>> bagOfWords = new HashMap<String, HashMap<Integer, Double>>();
-		
-		int i = 2;
 		for (String term : index.keySet()) {
 			attributes.addElement(new Attribute(term));
-			for (Posting p : index.get(term)) {
-				if (!bagOfWords.containsKey(p.getDocId())) {
-					bagOfWords.put(p.getDocId(), new HashMap<Integer, Double>());
-				}
-				bagOfWords.get(p.getDocId()).put(i, p.getWeight());
-			}
-			i++;
 		}
 		
 		data = new Instances("index", attributes, 0);
 		double[] values;
-		for (String entry : bagOfWords.keySet()) {
+		for (String entry : documentVectors.keySet()) {
 			values = new double[data.numAttributes()];
 			String[] tmp = entry.split("/");
 			values[0] = docClasses.indexOf(tmp[0]);
 			values[1] = data.attribute(1).addStringValue(tmp[1]);
-			HashMap<Integer, Double> list = bagOfWords.get(entry);
+			HashMap<Integer, Double> list = documentVectors.get(entry);
 			for (Integer idx : list.keySet()) {
-				values[idx] = list.get(idx);
+				// The first two entries are class and name, so we have
+				// to add 2 to the index
+				values[idx + 2] = list.get(idx);
 			}
 			data.add(new Instance(1.0, values));
 		}
