@@ -112,6 +112,7 @@ public class Indexer {
 		
 		System.out.println("Done indexing " + numDocs + " documents in " 
 							+ (System.currentTimeMillis() - startTime) + "ms ");
+		System.out.println("Number of terms: " + index.size());
 		
 	}
 
