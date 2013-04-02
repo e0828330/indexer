@@ -25,13 +25,21 @@ public class Indexer {
 
 	private String targetDirectory;
 	
+	// Used for parallel processing
 	private ExecutorService executorService;
+
+	// Output of the map phase i.e (term, doc) pairs
 	private Hashtable<String, Vector<String>> mapOut;
+	
+	// Inverted index gets build during reduce
 	private Hashtable<String, ArrayList<Posting>> index;
-	private int numDocs = 0;
+	
+	// Stores the documents as vectors
+	private HashMap<String, HashMap<Integer, Double>> documentVectors;
+
 	private ArrayList<String> docIds = new ArrayList<String>();
 	private HashSet<String> classes = new HashSet<String>();
-	private HashMap<String, HashMap<Integer, Double>> documentVectors;
+	private int numDocs = 0;
 	
 	public Indexer(String targetDirectory) {
 		this.targetDirectory = targetDirectory;
@@ -103,10 +111,19 @@ public class Indexer {
 		}
 		
 		System.out.println("Done indexing " + numDocs + " documents in " 
-						   + (System.currentTimeMillis() - startTime) + "ms ");
+							+ (System.currentTimeMillis() - startTime) + "ms ");
 		
 	}
 
+	/**
+	 * Traverse the target directory and start
+	 * queue a parser run for each document we find.
+	 * 
+	 * While doing that take the opportunity and count the documents,
+	 * and build the docId and classes lists.
+	 * 
+	 * @param currentFile
+	 */
 	private void traverseDir(File currentFile) {
 		if (!currentFile.isDirectory()) {
 			executorService.execute(new Parser(currentFile, true, mapOut));
@@ -169,7 +186,7 @@ public class Indexer {
 			arffSaverInstance.setInstances(sparseDataset); 
 			arffSaverInstance.setFile(new File(filename)); 
 			arffSaverInstance.writeBatch();
-			
+			// TODO: gzip compress the file
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
