@@ -6,7 +6,7 @@ import java.util.Vector;
 
 import utils.Stemmer;
 
-public class FileIndexer implements Runnable {
+public class Parser implements Runnable {
 
 	private Hashtable<String, Vector<String>> out;
 	private String filename;
@@ -15,12 +15,13 @@ public class FileIndexer implements Runnable {
 	private boolean useStemming;
 	
 	/**
-	 * File indexer 
+	 * Parser
+	 *  
 	 * @param file - File to index
 	 * @param useStemming - use stemming?
 	 * @param out - output hashtable
 	 */
-	public FileIndexer(File file, boolean useStemming, Hashtable<String, Vector<String>> out) {
+	public Parser(File file, boolean useStemming, Hashtable<String, Vector<String>> out) {
 		this.out = out;
 		this.filename = file.getAbsolutePath();
 		this.docId = file.getParentFile().getName() + "/" + file.getName();

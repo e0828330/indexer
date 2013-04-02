@@ -95,7 +95,7 @@ public class Indexer {
 
 	private void traverseDir(File currentFile) {
 		if (!currentFile.isDirectory()) {
-			executorService.execute(new FileIndexer(currentFile, true, mapOut));
+			executorService.execute(new Parser(currentFile, true, mapOut));
 			docIds.add(currentFile.getParentFile().getName() + "/" + currentFile.getName());
 			classes.add(currentFile.getParentFile().getName()); //build a list of classes
 			numDocs++;
