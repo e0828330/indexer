@@ -215,10 +215,10 @@ public class Indexer {
 		public int compare(String a, String b) {
 			Double x = base.get(a);
 			Double y = base.get(b);
-	        if (x.equals(y)) {
-	            return b.compareTo(a);
-	        }
-	        return y.compareTo(x);
+			if (x.equals(y)) {
+				return b.compareTo(a);
+			}
+			return y.compareTo(x);
 		}
 
 	}
