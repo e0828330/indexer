@@ -8,18 +8,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instances;
-import weka.core.Instance;
-import weka.core.converters.ArffSaver;
-import weka.filters.Filter;
-import weka.filters.unsupervised.instance.NonSparseToSparse;
+import utils.ARFFWriter;
 
 public class Indexer {
 
@@ -35,7 +30,7 @@ public class Indexer {
 	private Hashtable<String, ArrayList<Posting>> index;
 	
 	// Stores the documents as vectors
-	private HashMap<String, HashMap<Integer, Double>> documentVectors;
+	private HashMap<String, TreeMap<Integer, Double>> documentVectors;
 
 	private ArrayList<String> docIds = new ArrayList<String>();
 	private HashSet<String> classes = new HashSet<String>();
@@ -98,12 +93,12 @@ public class Indexer {
 		}
 		
 		// Build the document vectors
-		documentVectors = new HashMap<String, HashMap<Integer, Double>>();
+		documentVectors = new HashMap<String, TreeMap<Integer, Double>>();
 		int i = 0;
 		for (String term : index.keySet()) {
 			for (Posting p : index.get(term)) {
 				if (!documentVectors.containsKey(p.getDocId())) {
-					documentVectors.put(p.getDocId(), new HashMap<Integer, Double>());
+					documentVectors.put(p.getDocId(), new TreeMap<Integer, Double>());
 				}
 				documentVectors.get(p.getDocId()).put(i, p.getWeight());
 			}
@@ -145,52 +140,44 @@ public class Indexer {
 	 * @param filename
 	 */
 	public void buildARFF(String filename) {
-		Instances data;
-		FastVector attributes = new FastVector();
-		FastVector docClasses = new FastVector(classes.size());
-
-		for (String className : classes) {
-			docClasses.addElement(className);
-		}
-		attributes.addElement(new Attribute("documentClass", docClasses));
-		attributes.addElement(new Attribute("documentName", (FastVector) null));
-		
-		for (String term : index.keySet()) {
-			attributes.addElement(new Attribute(term));
-		}
-		
-		data = new Instances("index", attributes, 0);
-		double[] values;
-		for (String entry : documentVectors.keySet()) {
-			values = new double[data.numAttributes()];
-			String[] tmp = entry.split("/");
-			values[0] = docClasses.indexOf(tmp[0]);
-			values[1] = data.attribute(1).addStringValue(tmp[1]);
-			HashMap<Integer, Double> list = documentVectors.get(entry);
-			for (Integer idx : list.keySet()) {
-				// The first two entries are class and name, so we have
-				// to add 2 to the index
-				values[idx + 2] = list.get(idx);
-			}
-			data.add(new Instance(1.0, values));
-		}
-		
-		
 		try {
-			NonSparseToSparse nonSparseToSparseInstance = new NonSparseToSparse(); 
-			nonSparseToSparseInstance.setInputFormat(data);
-			Instances sparseDataset = Filter.useFilter(data, nonSparseToSparseInstance);
-
-			//System.out.println(sparseDataset);
-			
-			ArffSaver arffSaverInstance = new ArffSaver(); 
-			arffSaverInstance.setInstances(sparseDataset); 
-			arffSaverInstance.setFile(new File(filename)); 
-			arffSaverInstance.writeBatch();
-			// TODO: gzip compress the file
-		} catch (Exception e) {
+			ARFFWriter writer = new ARFFWriter(filename, "index");
+			String docClasses = "{";
+			boolean first = true;
+			for (String className : classes) {
+				if (first) {
+					docClasses += className;
+					first = false;
+				}
+				else {
+					docClasses += ", " + className;
+				}
+			}
+			writer.addAttribute("@documentClass@", docClasses + "}");
+			writer.addAttribute("@documentName@", "STRING");
+			for (String term : index.keySet()) {
+				writer.addAttribute(term, "NUMERIC");
+			}
+			writer.beginData();
+			for (String entry : documentVectors.keySet()) {
+				String[] tmp = entry.split("/");
+				writer.startRow();
+				writer.addConstantValue(true, 0, tmp[0]);
+				writer.addStringValue(false, 1, tmp[1]);
+				TreeMap<Integer, Double> list = documentVectors.get(entry);
+				for (Integer idx : list.keySet()) {
+					// The first two entries are class and name, so we have
+					// to add 2 to the index
+					writer.addDoubleValue(false, idx + 2, list.get(idx));
+				}
+				writer.endRow();
+			}
+			writer.close();
+			System.out.println("Wrote " + filename);
+		}
+		catch(IOException e) {
 			e.printStackTrace();
-		} 
+		}
 		
 	}
 	
