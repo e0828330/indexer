@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import utils.Stemmer;
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
@@ -44,8 +46,11 @@ public class Indexer {
 	private HashSet<String> classes = new HashSet<String>();
 	private int numDocs = 0;
 	
+	private boolean useStemming;
+	
 	public Indexer(String targetDirectory) {
 		this.targetDirectory = targetDirectory;
+		this.useStemming = false;
 	}
 	
 	/**
@@ -117,6 +122,8 @@ public class Indexer {
 							+ (System.currentTimeMillis() - startTime) + "ms ");
 		System.out.println("Number of terms: " + index.size());
 		
+		Tokenizer tk = new Tokenizer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/misc.forsale/76057");
+		get_similar_docs(tk.getTokens());
 	}
 
 	/**
@@ -130,7 +137,7 @@ public class Indexer {
 	 */
 	private void traverseDir(File currentFile) {
 		if (!currentFile.isDirectory()) {
-			executorService.execute(new Parser(currentFile, false, mapOut));
+			executorService.execute(new Parser(currentFile, useStemming, mapOut));
 			docIds.add(currentFile.getParentFile().getName() + "/" + currentFile.getName());
 			classes.add(currentFile.getParentFile().getName()); //build a list of classes
 			numDocs++;
@@ -198,9 +205,6 @@ public class Indexer {
 			e.printStackTrace();
 		}
 
-		Tokenizer tk = new Tokenizer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/misc.forsale/76057");
-		get_similar_docs(tk.getTokens());
-
 	}
 
 	static class SortedSources implements Comparator<String> {
@@ -224,13 +228,24 @@ public class Indexer {
 	}
 
 	private void get_similar_docs(String[] query) {
+		System.out.println(Arrays.deepToString(query));
 		HashMap<String, Double> sources = new HashMap<String, Double>();
-
-		for (String term : query) {
+		HashSet<String> terms = new HashSet<String>(Arrays.asList(query));
+		
+		Stemmer stemmer = new Stemmer();
+		
+		for (String term : terms) {
 			term = term.toLowerCase();
+			if (useStemming) {
+				stemmer.add(term.toCharArray(), term.length());
+				stemmer.stem();
+				term = stemmer.toString();
+			}
+
 			if (!index.containsKey(term)) {
 				continue;
 			}
+
 			for (Posting p : index.get(term)) {
 				double value = 0.;
 				if (sources.containsKey(p.getDocId())) {
