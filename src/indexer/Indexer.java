@@ -190,6 +190,9 @@ public class Indexer {
 
 	}
 
+	/**
+	 * This is used for sorting the top 10 documents
+	 */
 	static class SortedSources implements Comparator<String> {
 
 		Map<String, Double> base;
@@ -210,15 +213,21 @@ public class Indexer {
 
 	}
 
+	/**
+	 * Find the 10 most similar documents for a given query
+	 * 
+	 * @param query
+	 */
 	private void get_similar_docs(String[] query) {
-		System.out.println(Arrays.deepToString(query));
 		HashMap<String, Double> sources = new HashMap<String, Double>();
 		HashSet<String> terms = new HashSet<String>(Arrays.asList(query));
 		
 		Stemmer stemmer = new Stemmer();
 		
+		// Compute sources
 		for (String term : terms) {
 			term = term.toLowerCase();
+
 			if (useStemming) {
 				stemmer.add(term.toCharArray(), term.length());
 				stemmer.stem();
@@ -239,12 +248,14 @@ public class Indexer {
 			}
 		}
 
+		// Normalize sources
 		for (String docId : sources.keySet()) {
 			if (sources.containsKey(docId)) {
 				sources.put(docId, sources.get(docId) / documentVectors.get(docId).size());
 			}
 		}
 
+		// Sort documents by source to get the top 10
 		SortedSources ss = new SortedSources(sources);
 		TreeMap<String, Double> sorted = new TreeMap<String, Double>(ss);
 		sorted.putAll(sources);
@@ -253,6 +264,7 @@ public class Indexer {
 		for (String doc : sorted.keySet()) {
 			if (i == 10)
 				break;
+			// TODO: Write to file
 			System.out.printf("topic1 Q0 %s %d %.2f group1_medium\n", doc, i + 1, sorted.get(doc));
 			i++;
 		}
