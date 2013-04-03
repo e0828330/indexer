@@ -43,9 +43,9 @@ public class Indexer {
 	
 	private boolean useStemming;
 	
-	public Indexer(String targetDirectory) {
+	public Indexer(String targetDirectory, boolean useStemming) {
 		this.targetDirectory = targetDirectory;
-		this.useStemming = false;
+		this.useStemming = useStemming;
 	}
 	
 	/**
