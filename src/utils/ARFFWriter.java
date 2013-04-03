@@ -1,12 +1,15 @@
 package utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.zip.GZIPOutputStream;
 
 public class ARFFWriter {
-
-	private FileWriter fstream;
+	
+	private BufferedWriter writer;
 	
 	/**
 	 * Writes a new (sparse) ARFF file
@@ -16,9 +19,9 @@ public class ARFFWriter {
 	 * @throws IOException
 	 */
 	public ARFFWriter(String filename, String name) throws IOException {
-		fstream = new FileWriter(new File(filename));
-		fstream.write("@RELATION " + name + "\n\n");
-		// TODO: gzip the file
+		GZIPOutputStream gzout = new GZIPOutputStream(new FileOutputStream(new File(filename)));
+		writer = new BufferedWriter(new OutputStreamWriter(gzout));
+		writer.append("@RELATION " + name + "\n\n");
 	}
 	
 	/**
@@ -29,7 +32,7 @@ public class ARFFWriter {
 	 * @throws IOException
 	 */
 	public void addAttribute(String name, String type) throws IOException {
-		fstream.write("@ATTRIBUTE \"" + name + "\" " + type + "\n");
+		writer.append("@ATTRIBUTE \"" + name + "\" " + type + "\n");
 	}
 	
 	/**
@@ -38,7 +41,7 @@ public class ARFFWriter {
 	 * @throws IOException
 	 */
 	public void beginData() throws IOException {
-		fstream.write("@DATA\n");
+		writer.append("@DATA\n");
 	}
 	
 	/**
@@ -46,7 +49,7 @@ public class ARFFWriter {
 	 * @throws IOException
 	 */
 	public void startRow() throws IOException {
-		fstream.write("{");
+		writer.append("{");
 	}
 	
 	/**
@@ -59,10 +62,10 @@ public class ARFFWriter {
 	 */
 	public void addDoubleValue(boolean first, int index, double value) throws IOException {
 		if (first) {
-			fstream.write(index + " " + value);
+			writer.append(index + " " + value);
 		}
 		else {
-			fstream.write(", " + index + " " + value);
+			writer.append(", " + index + " " + value);
 		}
 	}
 	
@@ -76,10 +79,10 @@ public class ARFFWriter {
 	 */
 	public void addStringValue(boolean first, int index, String value) throws IOException {
 		if (first) {
-			fstream.write(index + " " + value);
+			writer.append(index + " " + value);
 		}
 		else {
-			fstream.write(", " + index + " " + value);
+			writer.append(", " + index + " " + value);
 		}
 	}
 	
@@ -93,10 +96,10 @@ public class ARFFWriter {
 	 */
 	public void addConstantValue(boolean first, int index, String value) throws IOException {
 		if (first) {
-			fstream.write(index + " \"" + value + "\"");
+			writer.append(index + " \"" + value + "\"");
 		}
 		else {
-			fstream.write(", " + index + " " + value);
+			writer.append(", " + index + " " + value);
 		}
 	}
 	
@@ -106,7 +109,7 @@ public class ARFFWriter {
 	 * @throws IOException
 	 */
 	public void endRow() throws IOException {
-		fstream.write("}\n");	
+		writer.append("}\n");	
 	}
 	
 	/**
@@ -115,7 +118,7 @@ public class ARFFWriter {
 	 * @throws IOException
 	 */
 	public void close() throws IOException {
-		fstream.close();
+		writer.close();
 	}
 	
 }
