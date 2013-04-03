@@ -31,6 +31,7 @@ public class Parser implements Runnable {
 	@Override
 	public void run() {
 		Tokenizer tk = new Tokenizer(filename);
+
 		for (String word : tk.getTokens()) {
 			if (word.length() <= 1) {
 				continue; // filter some nonsense

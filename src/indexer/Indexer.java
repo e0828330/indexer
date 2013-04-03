@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 import weka.core.Attribute;
 import weka.core.FastVector;
-import weka.core.Instances;
 import weka.core.Instance;
+import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
 import weka.filters.unsupervised.instance.NonSparseToSparse;
@@ -127,7 +130,7 @@ public class Indexer {
 	 */
 	private void traverseDir(File currentFile) {
 		if (!currentFile.isDirectory()) {
-			executorService.execute(new Parser(currentFile, true, mapOut));
+			executorService.execute(new Parser(currentFile, false, mapOut));
 			docIds.add(currentFile.getParentFile().getName() + "/" + currentFile.getName());
 			classes.add(currentFile.getParentFile().getName()); //build a list of classes
 			numDocs++;
@@ -185,13 +188,80 @@ public class Indexer {
 			
 			ArffSaver arffSaverInstance = new ArffSaver(); 
 			arffSaverInstance.setInstances(sparseDataset); 
-			arffSaverInstance.setFile(new File(filename)); 
+			arffSaverInstance.setFile(new File(filename));
 			arffSaverInstance.writeBatch();
+
+			System.out.println("Wrote " + filename);
+
 			// TODO: gzip compress the file
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
-		
+		}
+
+		Tokenizer tk = new Tokenizer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/misc.forsale/76057");
+		get_similar_docs(tk.getTokens());
+
 	}
-	
+
+	static class SortedSources implements Comparator<String> {
+
+		Map<String, Double> base;
+
+		public SortedSources(Map<String, Double> base) {
+			this.base = base;
+		}
+
+		@Override
+		public int compare(String a, String b) {
+			Double x = base.get(a);
+			Double y = base.get(b);
+	        if (x.equals(y)) {
+	            return b.compareTo(a);
+	        }
+	        return y.compareTo(x);
+		}
+
+	}
+
+	private void get_similar_docs(String[] query) {
+		HashMap<String, Double> sources = new HashMap<String, Double>();
+
+		for (String term : query) {
+			term = term.toLowerCase();
+			if (!index.containsKey(term)) {
+				continue;
+			}
+			for (Posting p : index.get(term)) {
+				if (!p.getDocId().startsWith("misc.forsale")) {
+					continue;
+				}
+				double value = 0.;
+				if (sources.containsKey(p.getDocId())) {
+					value = sources.get(p.getDocId());
+				}
+				value += p.getWeight();
+				sources.put(p.getDocId(), value);
+			}
+		}
+
+		for (String docId : sources.keySet()) {
+			if (sources.containsKey(docId)) {
+				sources.put(docId, sources.get(docId) / documentVectors.get(docId).size());
+			}
+		}
+
+		SortedSources ss = new SortedSources(sources);
+		TreeMap<String, Double> sorted = new TreeMap<String, Double>(ss);
+		sorted.putAll(sources);
+
+		int i = 0;
+		for (String doc : sorted.keySet()) {
+			if (i == 10)
+				break;
+			System.out.println("doc: " + doc + ", " + sorted.get(doc));
+			i++;
+		}
+
+	}
+
 }
