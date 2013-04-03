@@ -116,9 +116,6 @@ public class Indexer {
 		System.out.println("Done indexing " + numDocs + " documents in " 
 							+ (System.currentTimeMillis() - startTime) + "ms ");
 		System.out.println("Number of terms: " + index.size());
-		
-		Tokenizer tk = new Tokenizer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/misc.forsale/76057");
-		get_similar_docs(tk.getTokens());
 	}
 
 	/**
@@ -218,7 +215,7 @@ public class Indexer {
 	 * 
 	 * @param query
 	 */
-	private void get_similar_docs(String[] query) {
+	public void get_similar_docs(String[] query) {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
 		HashSet<String> terms = new HashSet<String>(Arrays.asList(query));
 		
