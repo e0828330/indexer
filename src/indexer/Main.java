@@ -7,8 +7,8 @@ public class Main {
 		// TODO: Parse cmdline arguments
 
 		Indexer idx = new Indexer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/");
-		idx.buildIndex(2, 15);
-		idx.buildARFF("/tmp/test.arff");
+		idx.buildIndex(0, 15);
+		idx.buildARFF("/var/tmp/test.arff");
 	}
 
 }
