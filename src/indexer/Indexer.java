@@ -232,9 +232,6 @@ public class Indexer {
 				continue;
 			}
 			for (Posting p : index.get(term)) {
-				if (!p.getDocId().startsWith("misc.forsale")) {
-					continue;
-				}
 				double value = 0.;
 				if (sources.containsKey(p.getDocId())) {
 					value = sources.get(p.getDocId());
