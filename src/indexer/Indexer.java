@@ -258,7 +258,7 @@ public class Indexer {
 		for (String doc : sorted.keySet()) {
 			if (i == 10)
 				break;
-			System.out.println("doc: " + doc + ", " + sorted.get(doc));
+			System.out.printf("topic1 Q0 %s %d %.2f group1_medium\n", doc, i + 1, sorted.get(doc));
 			i++;
 		}
 
