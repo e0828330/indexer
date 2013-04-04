@@ -1,9 +1,6 @@
 package indexer;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,15 +8,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
-
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import utils.Stemmer;
 import utils.ARFFWriter;
+import utils.Stemmer;
 
 public class Indexer {
 
@@ -82,23 +78,6 @@ public class Indexer {
 		executorService.shutdown();
 		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 		executorService = null;
-		
-		// Write result to text file for debugging
-		try {
-			FileWriter fstream = new FileWriter("/tmp/debug.txt");
-			BufferedWriter out = new BufferedWriter(fstream);
-			for(String term : index.keySet()) {
-				out.write(term + " : ");
-				for (Posting p : index.get(term)) {
-					out.write("(" + p.getDocId() + ", " + p.getTf() + ", " + p.getWeight() + "), ");
-				}
-				out.write("\n");
-			}
-			out.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 		// Build the document vectors
 		documentVectors = new HashMap<String, TreeMap<Integer, Double>>();
