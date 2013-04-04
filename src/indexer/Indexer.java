@@ -80,7 +80,7 @@ public class Indexer {
 		executorService = null;
 		
 		// Build the document vectors
-		documentVectors = new HashMap<String, TreeMap<Integer, Double>>();
+		documentVectors = new HashMap<String, TreeMap<Integer, Double>>(numDocs);
 		int i = 0;
 		for (String term : index.keySet()) {
 			for (Posting p : index.get(term)) {
