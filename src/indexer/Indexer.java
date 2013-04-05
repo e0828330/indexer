@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -25,11 +25,11 @@ public class Indexer {
 	private ExecutorService executorService;
 
 	// Output of the map phase i.e (term, doc) pairs
-	private Hashtable<String, Vector<String>> mapOut;
-	
+	private ConcurrentHashMap<String, Vector<String>> mapOut;
+
 	// Inverted index gets build during reduce
-	private Hashtable<String, ArrayList<Posting>> index;
-	
+	private ConcurrentHashMap<String, ArrayList<Posting>> index;
+
 	// Stores the documents as vectors
 	private HashMap<String, TreeMap<Integer, Double>> documentVectors;
 
@@ -55,10 +55,9 @@ public class Indexer {
 		
 		Long startTime = System.currentTimeMillis();
 		int maxThreads = Runtime.getRuntime().availableProcessors();
-		
+
 		executorService = Executors.newFixedThreadPool(maxThreads);
-		mapOut = new Hashtable<String, Vector<String>>();
-		index = new Hashtable<String, ArrayList<Posting>>();
+		mapOut = new ConcurrentHashMap<String, Vector<String>>();
 
 		traverseDir(new File(targetDirectory));
 
@@ -66,8 +65,9 @@ public class Indexer {
 		executorService.shutdown();
 		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 		executorService = null;
-		
+
 		// Create Posting lists
+		index = new ConcurrentHashMap<String, ArrayList<Posting>>();
 		executorService = Executors.newFixedThreadPool(maxThreads);
 
 		for(String term : mapOut.keySet()) {
@@ -78,9 +78,9 @@ public class Indexer {
 		executorService.shutdown();
 		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 		executorService = null;
-		
+
 		// Build the document vectors
-		documentVectors = new HashMap<String, TreeMap<Integer, Double>>(numDocs);
+		documentVectors = new HashMap<String, TreeMap<Integer, Double>>(numDocs, 1.0f);
 		int i = 0;
 		for (String term : index.keySet()) {
 			for (Posting p : index.get(term)) {

@@ -3,18 +3,18 @@ package indexer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 public class Inverter implements Runnable {
 
 	private String term;
-	private Hashtable<String, ArrayList<Posting>> index;
-	private Hashtable<String, Vector<String>> input;
-	
+	private Map<String, ArrayList<Posting>> index;
+	private Map<String, Vector<String>> input;
+
 	private int maxThreshold;
 	private int minThreshold;
-	
+
 	private int numDocs;
 	
 	/**
@@ -27,10 +27,10 @@ public class Inverter implements Runnable {
 	 * @param maxThreshold
 	 * @param numDocs
 	 */
-	public Inverter(Hashtable<String, Vector<String>> input, 
-					Hashtable<String, ArrayList<Posting>> index, String term,
+	public Inverter(Map<String, Vector<String>> input,
+					Map<String, ArrayList<Posting>> index, String term,
 					int minThreshold, int maxThreshold, int numDocs) {
-		
+
 		this.term = term;
 		this.input = input;
 		this.index = index;

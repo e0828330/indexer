@@ -1,14 +1,14 @@
 package indexer;
 
 import java.io.File;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 import utils.Stemmer;
 
 public class Parser implements Runnable {
 
-	private Hashtable<String, Vector<String>> out;
+	private Map<String, Vector<String>> out;
 	private String filename;
 	private Stemmer stemmer = new Stemmer();
 	private String docId;
@@ -21,7 +21,7 @@ public class Parser implements Runnable {
 	 * @param useStemming - use stemming?
 	 * @param out - output hashtable
 	 */
-	public Parser(File file, boolean useStemming, Hashtable<String, Vector<String>> out) {
+	public Parser(File file, boolean useStemming, Map<String, Vector<String>> out) {
 		this.out = out;
 		this.filename = file.getAbsolutePath();
 		this.docId = file.getParentFile().getName() + "/" + file.getName();
