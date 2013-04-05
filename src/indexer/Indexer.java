@@ -288,7 +288,7 @@ public class Indexer {
 	 * 
 	 * @param query
 	 */
-	public void get_similar_docs(String[] query) {
+	public Map<String, Double> get_similar_docs(String[] query) {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
 		HashSet<String> terms = new HashSet<String>(Arrays.asList(query));
 		
@@ -338,6 +338,8 @@ public class Indexer {
 			System.out.printf("topic1 Q0 %s %d %.2f group1_medium\n", doc, i + 1, sorted.get(doc));
 			i++;
 		}
+		
+		return sorted;
 
 	}
 
