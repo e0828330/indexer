@@ -54,13 +54,28 @@ public class Indexer {
 	}
 	
 	/**
+	 * Waits for the executorService to execute all queued / running
+	 * threads.
+	 */
+	private void waitForThreads() {
+		if (executorService != null) {
+			try {
+				executorService = null;
+				executorService.shutdown();
+				executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
 	 * Build the index and exclude terms with a tf out of the threshold range
 	 * 
 	 * @param minThreshold
 	 * @param maxThreshold
-	 * @throws InterruptedException
 	 */
-	public void buildIndex(int minThreshold, int maxThreshold) throws InterruptedException {
+	public void buildIndex(int minThreshold, int maxThreshold) {
 		Long startTime = System.currentTimeMillis();
 
 		executorService = Executors.newFixedThreadPool(maxThreads);
@@ -69,9 +84,7 @@ public class Indexer {
 		traverseDir(new File(targetDirectory));
 
 		// Wait for all threads to finish
-		executorService.shutdown();
-		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-		executorService = null;
+		waitForThreads();
 
 		// Create Posting lists
 		index = new ConcurrentHashMap<String, ArrayList<Posting>>();
@@ -82,9 +95,7 @@ public class Indexer {
 		}
 
 		// Wait for all threads to finish
-		executorService.shutdown();
-		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-		executorService = null;
+		waitForThreads();
 
 		// Build the document vectors
 		documentVectors = new HashMap<String, TreeMap<Integer, Double>>(numDocs, 1.0f);
@@ -178,7 +189,7 @@ public class Indexer {
 	 * 
 	 * @param filename
 	 */
-	public void readFromARFF(String filename) throws InterruptedException {
+	public void readFromARFF(String filename) {
 		Long startTime = System.currentTimeMillis();
 		try {
 			GZIPInputStream gzin = new GZIPInputStream(new FileInputStream(new File(filename)));
@@ -239,9 +250,7 @@ public class Indexer {
 				executorService.execute(new SortThread(index, term));
 			}
 			// Wait for all threads to finish
-			executorService.shutdown();
-			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-			executorService = null;
+			waitForThreads();
 			
 			
 		}
