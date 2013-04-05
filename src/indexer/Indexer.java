@@ -1,18 +1,24 @@
 package indexer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 
 import utils.ARFFWriter;
 import utils.Stemmer;
@@ -52,7 +58,6 @@ public class Indexer {
 	 * @throws InterruptedException
 	 */
 	public void buildIndex(int minThreshold, int maxThreshold) throws InterruptedException {
-		
 		Long startTime = System.currentTimeMillis();
 		int maxThreads = Runtime.getRuntime().availableProcessors();
 
@@ -87,7 +92,7 @@ public class Indexer {
 				if (!documentVectors.containsKey(p.getDocId())) {
 					documentVectors.put(p.getDocId(), new TreeMap<Integer, Double>());
 				}
-				documentVectors.get(p.getDocId()).put(i, p.getWeight());
+				documentVectors.get(p.getDocId()).put(i, (double) p.getWeight());
 			}
 			i++;
 		}
@@ -164,6 +169,83 @@ public class Indexer {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/**
+	 * Reads the index from the compressed ARFF file
+	 * 
+	 * @param filename
+	 */
+	public void readFromARFF(String filename) {
+		Long startTime = System.currentTimeMillis();
+		try {
+			GZIPInputStream gzin = new GZIPInputStream(new FileInputStream(new File(filename)));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(gzin));
+			String line;
+			
+			// Initialize maps
+			index = new ConcurrentHashMap<String, ArrayList<Posting>>();
+			HashMap<Integer, String> termMap = new HashMap<Integer, String>();
+			documentVectors = new HashMap<String, TreeMap<Integer, Double>>();
+			
+			boolean inData = false; 
+			int  i = 2;
+			while ((line = reader.readLine()) != null) {
+				// Read the attributes ... we intentionally skip the class and name
+				if (!inData && line.startsWith("@ATTRIBUTE")) {
+					String[] tmp = line.split(" ");
+					if (!tmp[1].equals("\"@documentClass@\"") && !tmp[1].equals("\"@documentName@\"")) {
+						String term = tmp[1].substring(1, tmp[1].length() - 1);
+						index.put(term, new ArrayList<Posting>());
+						termMap.put(i, term);
+						i++;
+					}
+				}
+				// Done with attributes?
+				else if (line.startsWith("@DATA")) {
+					inData = true;
+					continue;
+				}
+				// Data row: Parse and fill into the maps
+				if (inData) {
+					String docId;
+					line = line.substring(1, line.length() -1);
+					String[] attrs = line.split(", ");
+					docId = attrs[0].substring(2, attrs[0].length()) + "/" + attrs[1].substring(3, attrs[1].length() - 1);
+					classes.add(attrs[0].substring(2, attrs[0].length()));
+					
+					for (i = 2; i < attrs.length; i++) {
+						String[] tmp = attrs[i].split(" ");
+						Integer idx = Integer.parseInt(tmp[0]);
+						Double w = Double.parseDouble(tmp[1]);
+						Posting p = new Posting(docId);
+						p.setWeight(w);
+						index.get(termMap.get(idx)).add(p);
+						if (!documentVectors.containsKey(docId)) {
+							documentVectors.put(docId, new TreeMap<Integer, Double>());
+						}
+						documentVectors.get(docId).put(idx - 2, w);
+					}
+				}
+			}
+
+			reader.close();
+			
+			// Done reading now sort the posting lists
+			for(ArrayList<Posting> pList: index.values()) {
+				Collections.sort(pList, new Comparator<Posting>() {
+					@Override
+					public int compare(Posting a, Posting b) {
+						return a.getDocId().compareTo(b.getDocId());
+					}
+				});
+			}
+			
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Done construcing index from ARFF file in " + (System.currentTimeMillis() - startTime) + "ms ");
 	}
 
 	/**

@@ -79,10 +79,10 @@ public class ARFFWriter {
 	 */
 	public void addStringValue(boolean first, int index, String value) throws IOException {
 		if (first) {
-			writer.append(index + " " + value);
+			writer.append(index + " \"" + value + "\"");
 		}
 		else {
-			writer.append(", " + index + " " + value);
+			writer.append(", " + index + " \"" + value + "\"");
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class ARFFWriter {
 	 */
 	public void addConstantValue(boolean first, int index, String value) throws IOException {
 		if (first) {
-			writer.append(index + " \"" + value + "\"");
+			writer.append(index + " " + value);
 		}
 		else {
 			writer.append(", " + index + " " + value);
