@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 import utils.ARFFWriter;
+import utils.SortThread;
 import utils.Stemmer;
 
 public class Indexer {
@@ -45,9 +45,12 @@ public class Indexer {
 	
 	private boolean useStemming;
 	
+	private int maxThreads = 1;
+	
 	public Indexer(String targetDirectory, boolean useStemming) {
 		this.targetDirectory = targetDirectory;
 		this.useStemming = useStemming;
+		maxThreads = Runtime.getRuntime().availableProcessors();
 	}
 	
 	/**
@@ -59,7 +62,6 @@ public class Indexer {
 	 */
 	public void buildIndex(int minThreshold, int maxThreshold) throws InterruptedException {
 		Long startTime = System.currentTimeMillis();
-		int maxThreads = Runtime.getRuntime().availableProcessors();
 
 		executorService = Executors.newFixedThreadPool(maxThreads);
 		mapOut = new ConcurrentHashMap<String, Vector<String>>();
@@ -176,7 +178,7 @@ public class Indexer {
 	 * 
 	 * @param filename
 	 */
-	public void readFromARFF(String filename) {
+	public void readFromARFF(String filename) throws InterruptedException {
 		Long startTime = System.currentTimeMillis();
 		try {
 			GZIPInputStream gzin = new GZIPInputStream(new FileInputStream(new File(filename)));
@@ -232,14 +234,15 @@ public class Indexer {
 			reader.close();
 			
 			// Done reading now sort the posting lists
-			for(ArrayList<Posting> pList: index.values()) {
-				Collections.sort(pList, new Comparator<Posting>() {
-					@Override
-					public int compare(Posting a, Posting b) {
-						return a.getDocId().compareTo(b.getDocId());
-					}
-				});
+			executorService = Executors.newFixedThreadPool(maxThreads);
+			for(String term: index.keySet()) {
+				executorService.execute(new SortThread(index, term));
 			}
+			// Wait for all threads to finish
+			executorService.shutdown();
+			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+			executorService = null;
+			
 			
 		}
 		catch (IOException e) {
