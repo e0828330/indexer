@@ -60,9 +60,9 @@ public class Indexer {
 	private void waitForThreads() {
 		if (executorService != null) {
 			try {
-				executorService = null;
 				executorService.shutdown();
 				executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+				executorService = null;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
