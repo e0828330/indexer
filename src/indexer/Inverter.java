@@ -65,7 +65,7 @@ public class Inverter implements Runnable {
 			int idf = numDocs / result.size();
 
 			for (Posting p : result) {
-				p.setWeight(Math.log10(1 + p.getTf()) * Math.log10(idf));  
+				p.setWeight(Math.log(1 + p.getTf()) * Math.log10(idf));  
 			}
 
 			index.put(term, result);
