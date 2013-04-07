@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -290,12 +289,12 @@ public class Indexer {
 	 */
 	public Map<String, Double> get_similar_docs(String[] query) {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
-		HashSet<String> terms = new HashSet<String>(Arrays.asList(query));
-		
+		/*HashSet<String> terms = new HashSet<String>(Arrays.asList(query));*/
+				
 		Stemmer stemmer = new Stemmer();
 		
 		// Compute sources
-		for (String term : terms) {
+		for (String term : query) {
 			term = term.toLowerCase();
 
 			if (useStemming) {
@@ -304,10 +303,11 @@ public class Indexer {
 				term = stemmer.toString();
 			}
 
+
 			if (!index.containsKey(term)) {
 				continue;
 			}
-
+			
 			for (Posting p : index.get(term)) {
 				double value = 0.;
 				if (sources.containsKey(p.getDocId())) {
