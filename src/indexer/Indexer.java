@@ -287,7 +287,7 @@ public class Indexer {
 	 * 
 	 * @param query
 	 */
-	public Map<String, Double> get_similar_docs(String[] query) {
+	public Map<String, Double> search(String[] query) {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
 		/*HashSet<String> terms = new HashSet<String>(Arrays.asList(query));*/
 				
