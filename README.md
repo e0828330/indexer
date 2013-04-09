@@ -1,4 +1,4 @@
-Text Indexer & Similarity Retriev
+Text Indexer & Similarity Retrieval
 
 1. Usage
 
