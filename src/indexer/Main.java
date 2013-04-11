@@ -1,5 +1,8 @@
 package indexer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import args.ArgumentValidator;
 
 
@@ -25,7 +28,7 @@ public class Main {
 		
 		// Search
 		if (validator.getQuery() != null) {
-			idx.readFromARFF(validator.getOutput());
+			if (!validator.hasIndexer()) idx.readFromARFF(validator.getInput());
 			// We pass every word of the document as query
 			String[] query = null;
 			if (validator.isQueryPath()) {
@@ -35,7 +38,11 @@ public class Main {
 			else {
 				query = validator.getQuery().split(" ");
 			}
-			idx.search(query);
+			try {
+				idx.search(query, validator.getOutput());
+			} catch (Exception e) {
+				System.err.println("Cannot writ to output: " + validator.getOutput());
+			}
 		}
 		
 		// Both search results should be the same ..

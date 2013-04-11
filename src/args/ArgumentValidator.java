@@ -26,6 +26,7 @@ public class ArgumentValidator {
 	@Option (name = "-i",  required = true, usage = "-i <INPUT>")
 	private String input = null;
 	
+	@Option (name = "-o", required = true, usage = "-o <OUTPUTPATH/FILENAME.arff.gz>")	
 	private String output = null;	
 	
 	private String query = null;
@@ -72,6 +73,30 @@ public class ArgumentValidator {
 			System.err.println("If -indexer option is not set, a query is required.");
 			usage();
 			return false;			
+		}
+		
+		// Check inputfile if no -index is given
+		if (!indexer) {
+			if (!input.contains("arff.gz")) {
+				System.err.println("Input must be an arff.gz file.");
+				usage();
+				return false;				
+			}
+			if (!input.contains("arff.gz")) {
+				File file = new File(input);
+				if (!file.isFile()) {
+					System.err.println("If -indexer option is not set, a query is required.");
+					usage();
+					return false;					
+				}
+			}
+		}
+		else {
+			if (!output.contains("arff.gz")) {
+				System.err.println("If -indexer option is set, the output must be an arff.gz file.");
+				usage();	
+				return false;
+			}
 		}
 				
 		
@@ -126,10 +151,8 @@ public class ArgumentValidator {
 		return output;
 	}
 
-	@Option (name = "-o", required = true, usage = "-o <OUTPUTPATH/FILENAME.arff.gz>")
 	public void setOutput(String output) {
-		if (!output.contains("arff.gz")) this.output = null;
-		else this.output = output;
+		this.output = output;
 	}
 	
 	
@@ -162,7 +185,7 @@ public class ArgumentValidator {
 				"[-max MAX] : Sets the maximum threshold (default -1 = unlimited)\n" +
 				"[-stemming] : Enables stemming.\n" + 
 				"-i <path> : The input path to the collection.\n" +
-				"-o <path> : The output arff.gz file.\n" +
+				"-o <path> : The output file.\n" +
 				"[-q (<path>|query)] : The path to the query file or the query itself.");
 	}
 	

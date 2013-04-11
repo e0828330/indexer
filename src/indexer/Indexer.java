@@ -1,10 +1,14 @@
 package indexer;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -295,9 +299,17 @@ public class Indexer {
 	 * Find the 10 most similar documents for a given query
 	 * 
 	 * @param query
+	 * @param file 
+	 * @throws IOException 
 	 */
-	public Map<String, Double> search(String[] query) {
+	public Map<String, Double> search(String[] query, String filepath) throws IOException {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
+
+		// Create file 
+		FileWriter fstream = new FileWriter(filepath);
+		BufferedWriter out = new BufferedWriter(fstream);
+
+		
 		/*HashSet<String> terms = new HashSet<String>(Arrays.asList(query));*/
 				
 		Stemmer stemmer = new Stemmer();
@@ -338,16 +350,19 @@ public class Indexer {
 		SortedSources ss = new SortedSources(sources);
 		TreeMap<String, Double> sorted = new TreeMap<String, Double>(ss);
 		sorted.putAll(sources);
-
+		
+		DecimalFormat df = new DecimalFormat();
+		df.setMaximumFractionDigits(2);
+		
 		int i = 0;
 		for (String doc : sorted.keySet()) {
 			if (i == 10)
 				break;
-			// TODO: Write to file
-			System.out.printf("topic1 Q0 %s %d %.2f group1_medium\n", doc, i + 1, sorted.get(doc));
+			//System.out.printf("topic1 Q0 %s %d %.2f group1_medium\n", doc, i + 1, sorted.get(doc));
+			out.write("topic1 Q0 " + doc + " " + (i+1) + " " + df.format(sorted.get(doc)) + " group1_medium\n");
 			i++;
 		}
-		
+		out.close();
 		return sorted;
 
 	}
