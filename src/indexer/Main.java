@@ -41,7 +41,7 @@ public class Main {
 			try {
 				idx.search(query, validator.getOutput());
 			} catch (Exception e) {
-				System.err.println("Cannot writ to output: " + validator.getOutput());
+				System.err.println("Cannot write to output: " + validator.getOutput());
 			}
 		}
 		
