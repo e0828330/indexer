@@ -157,7 +157,7 @@ public class ArgumentValidator {
 
 	private void usage() {
 		System.err.println("This program has the following options:\n" +
-				"[-indexer] : Starts the indexer before search mode.\n" +
+				"[-indexer] : Indexes the collection.\n" +
 				"[-min MIN] : Sets the minimum threshold (default 0).\n" +
 				"[-max MAX] : Sets the maximum threshold (default -1 = unlimited)\n" +
 				"[-stemming] : Enables stemming.\n" + 
