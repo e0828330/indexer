@@ -210,7 +210,7 @@ public class Indexer {
 				// Read the attributes ... we intentionally skip the class and name
 				if (!inData && line.startsWith("@ATTRIBUTE")) {
 					String[] tmp = line.split(" ");
-					if (!tmp[1].equals("\"@documentClass@\"") && !tmp[1].equals("\"@documentName@\"")) {
+					if (!tmp[1].equals("\"@documentClass@\"") && !tmp[1].equals("\"@documentName@\"") && !tmp[1].equals("\"@hasStemming@\""))  {
 						String term = tmp[1].substring(1, tmp[1].length() - 1);
 						index.put(term, new ArrayList<Posting>());
 						termMap.put(i, term);
