@@ -173,7 +173,7 @@ public class Indexer {
 				writer.addNumericValue(false, 2, this.useStemming ? 1 : 0);
 				TreeMap<Integer, Double> list = documentVectors.get(entry);
 				for (Integer idx : list.keySet()) {
-					// The first tree entries are class and name, so we have
+					// The first tree entries are class, name and the stemming attributes, so we have
 					// to add 3 to the index
 					writer.addDoubleValue(false, idx + 3, list.get(idx));
 				}
