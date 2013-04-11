@@ -68,11 +68,11 @@ public class ArgumentValidator {
 			usage();
 			return false;
 		}
-		if (this.query == null) {
-			System.out.println("query invalid.");
+		if (!indexer && this.query == null) {
+			System.err.println("If -indexer option is not set, a query is required.");
 			usage();
-			return false;
-		}		
+			return false;			
+		}
 				
 		
 		// Debug information
@@ -141,7 +141,7 @@ public class ArgumentValidator {
 		return isQueryPath;
 	}
 
-	@Option (name = "-q", required = true, usage = "-q (<PATH>|QUERY)")	
+	@Option (name = "-q", required = false, usage = "-q (<PATH>|QUERY)")	
 	public void setQuery(String query) {
 		this.query = query;
 		this.checkedQuery = false;
@@ -163,7 +163,7 @@ public class ArgumentValidator {
 				"[-stemming] : Enables stemming.\n" + 
 				"-i <path> : The input path to the collection.\n" +
 				"-o <path> : The output arff.gz file.\n" +
-				"-q (<path>|query) : The path to the query file or the query itself.");
+				"[-q (<path>|query)] : The path to the query file or the query itself.");
 	}
 	
 	public boolean hasStemming() {

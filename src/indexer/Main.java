@@ -23,16 +23,18 @@ public class Main {
 		
 		idx.readFromARFF(validator.getOutput());
 		
-		// We pass every word of the document as query
-		String[] query = null;
-		if (validator.isQueryPath()) {
-			Tokenizer tk = new Tokenizer(validator.getQuery());
-			query = tk.getTokens();
+		if (validator.getQuery() != null) {
+			// We pass every word of the document as query
+			String[] query = null;
+			if (validator.isQueryPath()) {
+				Tokenizer tk = new Tokenizer(validator.getQuery());
+				query = tk.getTokens();
+			}
+			else {
+				query = validator.getQuery().split(" ");
+			}
+			idx.search(query);
 		}
-		else {
-			query = validator.getQuery().split(" ");
-		}
-		idx.search(query);			
 		
 		// Both search results should be the same ..
 		
