@@ -14,16 +14,18 @@ public class Main {
 		}
 	
 		Indexer idx;
-		idx = new Indexer();		
+		idx = new Indexer();	
+		
+		// Create Index
 		if (validator.hasIndexer()) {
 			idx.buildIndex(validator.getInput(), validator.getMinThreshold(), 
 					validator.getMaxThreshold(), validator.hasStemming());
 			idx.buildARFF(validator.getOutput());	
 		}
 		
-		idx.readFromARFF(validator.getOutput());
-		
+		// Search
 		if (validator.getQuery() != null) {
+			idx.readFromARFF(validator.getOutput());
 			// We pass every word of the document as query
 			String[] query = null;
 			if (validator.isQueryPath()) {
