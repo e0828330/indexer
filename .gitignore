@@ -1,1 +1,2 @@
 *.class
+bin/log4j.properties
