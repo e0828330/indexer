@@ -158,6 +158,7 @@ public class Indexer {
 			}
 			writer.addAttribute("@documentClass@", docClasses + "}");
 			writer.addAttribute("@documentName@", "STRING");
+			writer.addAttribute("@hasStemming@", "NUMERIC");
 			for (String term : index.keySet()) {
 				writer.addAttribute(term, "NUMERIC");
 			}
@@ -167,11 +168,12 @@ public class Indexer {
 				writer.startRow();
 				writer.addConstantValue(true, 0, tmp[0]);
 				writer.addStringValue(false, 1, tmp[1]);
+				writer.addNumericValue(false, 2, this.useStemming ? 1 : 0);
 				TreeMap<Integer, Double> list = documentVectors.get(entry);
 				for (Integer idx : list.keySet()) {
-					// The first two entries are class and name, so we have
-					// to add 2 to the index
-					writer.addDoubleValue(false, idx + 2, list.get(idx));
+					// The first tree entries are class and name, so we have
+					// to add 3 to the index
+					writer.addDoubleValue(false, idx + 3, list.get(idx));
 				}
 				writer.endRow();
 			}
@@ -201,7 +203,7 @@ public class Indexer {
 			documentVectors = new HashMap<String, TreeMap<Integer, Double>>();
 			
 			boolean inData = false; 
-			int  i = 2;
+			int  i = 3;
 			while ((line = reader.readLine()) != null) {
 				// Read the attributes ... we intentionally skip the class and name
 				if (!inData && line.startsWith("@ATTRIBUTE")) {
@@ -223,10 +225,15 @@ public class Indexer {
 					String docId;
 					line = line.substring(1, line.length() -1);
 					String[] attrs = line.split(", ");
-					docId = attrs[0].substring(2, attrs[0].length()) + "/" + attrs[1].substring(3, attrs[1].length() - 1);
+					docId = attrs[0].substring(2, attrs[0].length()) + "/" 
+							+ attrs[1].substring(3, attrs[1].length() - 1);
+					
+					useStemming = (attrs[2].substring(2).equals("1")) ? true : false;
+
 					classes.add(attrs[0].substring(2, attrs[0].length()));
 					
-					for (i = 2; i < attrs.length; i++) {
+					
+					for (i = 3; i < attrs.length; i++) {
 						String[] tmp = attrs[i].split(" ");
 						Integer idx = Integer.parseInt(tmp[0]);
 						Double w = Double.parseDouble(tmp[1]);
@@ -236,7 +243,7 @@ public class Indexer {
 						if (!documentVectors.containsKey(docId)) {
 							documentVectors.put(docId, new TreeMap<Integer, Double>());
 						}
-						documentVectors.get(docId).put(idx - 2, w);
+						documentVectors.get(docId).put(idx - 3, w);
 					}
 				}
 			}

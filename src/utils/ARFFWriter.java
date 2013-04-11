@@ -104,6 +104,23 @@ public class ARFFWriter {
 	}
 	
 	/**
+	 * Adds a new numeric value
+	 * 
+	 * @param first
+	 * @param index
+	 * @param value
+	 * @throws IOException
+	 */
+	public void addNumericValue(boolean first, int index, int value) throws IOException {
+		if (first) {
+			writer.append(index + " " + value);
+		}
+		else {
+			writer.append(", " + index + " " + value);
+		}
+	}	
+	
+	/**
 	 * Ends the row
 	 * 
 	 * @throws IOException
