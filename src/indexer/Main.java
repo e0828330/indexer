@@ -17,12 +17,12 @@ public class Main {
 		// 2.4 Output file
 		// 2.5 Search string?
 		
-		Indexer idx = new Indexer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/", false);
-		idx.buildIndex(2, 15);
+		Indexer idx = new Indexer("/home/martin/Dokumente/information_retrieval/20_newsgroups_subset", false);
+		idx.buildIndex(0, -1);
 		idx.buildARFF("/tmp/test.arff.gz");
 		
 		// We pass every word of the document as query
-		Tokenizer tk = new Tokenizer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/misc.forsale/76057");
+		Tokenizer tk = new Tokenizer("/home/martin/Dokumente/information_retrieval/20_newsgroups_subset/misc.forsale/76057");
 		idx.search(tk.getTokens());
 		
 		System.out.println("---");
@@ -31,8 +31,9 @@ public class Main {
 		idx.readFromARFF("/tmp/test.arff.gz");
 		
 		// We pass every word of the document as query
-		tk = new Tokenizer("/home/linux/Dokumente/Information Retrieval/20_newsgroups_subset/misc.forsale/76057");
-		idx.search(tk.getTokens());
+		tk = new Tokenizer("/home/martin/Dokumente/information_retrieval/20_newsgroups_subset/misc.forsale/76057");
+		
+		idx.search(new String[]{"crash"});
 		
 		// Both search results should be the same ..
 		
