@@ -158,11 +158,11 @@ public class ArgumentValidator {
 	private void usage() {
 		System.err.println("This program has the following options:\n" +
 				"[-indexer] : Starts the indexer before search mode.\n" +
-				"[-min MIN] : Stores the minimum threshold (default 0).\n" +
-				"[-max MAX] : Stores the maximum threshold (default -1 = unlimited)\n" +
-				"[-stemming] : Sets stemming.\n" + 
-				"-i <path> : The input path to the directory.\n" +
-				"-o <path> : The output path inclusive the .arff.gz filename.\n" +
+				"[-min MIN] : Sets the minimum threshold (default 0).\n" +
+				"[-max MAX] : Sets the maximum threshold (default -1 = unlimited)\n" +
+				"[-stemming] : Enables stemming.\n" + 
+				"-i <path> : The input path to the collection.\n" +
+				"-o <path> : The output arff.gz file.\n" +
 				"-q (<path>|query) : The path to the query file or the query itself.");
 	}
 	

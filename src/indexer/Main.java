@@ -14,9 +14,10 @@ public class Main {
 		}
 	
 		Indexer idx;
-		idx = new Indexer(validator.getInput(), validator.hasStemming());		
+		idx = new Indexer();		
 		if (validator.hasIndexer()) {
-			idx.buildIndex(validator.getMinThreshold(), validator.getMaxThreshold());
+			idx.buildIndex(validator.getInput(), validator.getMinThreshold(), 
+					validator.getMaxThreshold(), validator.hasStemming());
 			idx.buildARFF(validator.getOutput());	
 		}
 		

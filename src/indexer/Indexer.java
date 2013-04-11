@@ -46,9 +46,7 @@ public class Indexer {
 	
 	private int maxThreads = 1;
 	
-	public Indexer(String targetDirectory, boolean useStemming) {
-		this.targetDirectory = targetDirectory;
-		this.useStemming = useStemming;
+	public Indexer() {
 		maxThreads = Runtime.getRuntime().availableProcessors();
 	}
 	
@@ -70,12 +68,16 @@ public class Indexer {
 	
 	/**
 	 * Build the index and exclude terms with a tf out of the threshold range
+	 * @param targetDirectory 
 	 * 
 	 * @param minThreshold
 	 * @param maxThreshold
+	 * @param useStemming 
 	 */
-	public void buildIndex(int minThreshold, int maxThreshold) {
+	public void buildIndex(String targetDirectory, int minThreshold, int maxThreshold, boolean useStemming) {
 		Long startTime = System.currentTimeMillis();
+		this.targetDirectory = targetDirectory;
+		this.useStemming = useStemming;		
 
 		executorService = Executors.newFixedThreadPool(maxThreads);
 		mapOut = new ConcurrentHashMap<String, Vector<String>>();
