@@ -34,8 +34,6 @@ public class ArgumentValidator {
 	@Option (name = "-stemming", required = false, usage = "[-stemming]")
 	private boolean stemming = false;	
 	
-	private boolean checkedQuery = false;
-	
 	private boolean isQueryPath = false;
 
 	@Argument
@@ -167,7 +165,6 @@ public class ArgumentValidator {
 	@Option (name = "-q", required = false, usage = "-q (<PATH>|QUERY)")	
 	public void setQuery(String query) {
 		this.query = query;
-		this.checkedQuery = false;
 		File file = new File(query);
 		if (file.isFile()) {
 			isQueryPath = true;
@@ -175,7 +172,6 @@ public class ArgumentValidator {
 		else {
 			isQueryPath = false;
 		}
-		checkedQuery = true;
 	}	
 
 	private void usage() {
