@@ -14,8 +14,8 @@ public class ArgumentValidator {
 	
 	private Logger logger = Logger.getLogger(ArgumentValidator.class);
 
-	@Option (name = "-opt", required = true, usage = "-opt [indexer|search]")
-	private Options option = null;
+	@Option (name = "-indexer", required = false, usage = "-indexer")
+	private boolean indexer = false;
 	
 	@Option (name = "-min", required = false, usage = "-min MIN")
 	private int minThreshold = 0;
@@ -76,12 +76,8 @@ public class ArgumentValidator {
 				
 		
 		// Debug information
-		if (option == Options.INDEXER) {
-			logger.debug("Set -opt to indexer.");
-		}
-		if (option == Options.SEARCH) {
-			logger.debug("Set -opt to search.");
-		}
+		logger.debug("Set -indexer to " + (indexer ? "true" : "false"));
+		
 		logger.debug("Set -min to " + minThreshold + ".");
 		logger.debug("Set -max to " + maxThreshold + ".");
 		logger.debug("Set -stemming to " + stemming + ".");
@@ -94,12 +90,12 @@ public class ArgumentValidator {
 		return true;
 	}
 	
-	public Options getOption() {
-		return option;
+	public boolean hasIndexer() {
+		return indexer;
 	}
 
-	public void setOption(Options option) {
-		this.option = option;
+	public void setIndexer(boolean indexer) {
+		this.indexer = indexer;
 	}
 
 	public int getMinThreshold() {
@@ -161,7 +157,7 @@ public class ArgumentValidator {
 
 	private void usage() {
 		System.err.println("This program has the following options:\n" +
-				"-opt (indexer | search) : Starts the indexer or the search mode.\n" +
+				"[-indexer] : Starts the indexer before search mode.\n" +
 				"[-min MIN] : Stores the minimum threshold (default 0).\n" +
 				"[-max MAX] : Stores the maximum threshold (default -1 = unlimited)\n" +
 				"[-stemming] : Sets stemming.\n" + 
@@ -170,16 +166,12 @@ public class ArgumentValidator {
 				"-q (<path>|query) : The path to the query file or the query itself.");
 	}
 	
-	public boolean isStemming() {
+	public boolean hasStemming() {
 		return stemming;
 	}
 
 	public void setStemming(boolean stemming) {
 		this.stemming = stemming;
-	}
-
-	public enum Options {
-		INDEXER, SEARCH
 	}
 	
 }
