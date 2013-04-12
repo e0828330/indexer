@@ -26,7 +26,7 @@ public class ArgumentValidator {
 	@Option (name = "-i",  required = true, usage = "-i <INPUT>")
 	private String input = null;
 	
-	@Option (name = "-o", required = true, usage = "-o <OUTPUTPATH/FILENAME.arff.gz>")	
+	@Option (name = "-o", required = false, usage = "-o <OUTPUTPATH/FILENAME.arff.gz>")	
 	private String output = null;	
 	
 	private String query = null;
@@ -62,11 +62,6 @@ public class ArgumentValidator {
 			usage();
 			return false;
 		}
-		if (this.output == null) {
-			System.out.println("output invalid.");
-			usage();
-			return false;
-		}
 		if (!indexer && this.query == null) {
 			System.err.println("If -indexer option is not set, a query is required.");
 			usage();
@@ -90,7 +85,7 @@ public class ArgumentValidator {
 			}
 		}
 		else {
-			if (!output.contains("arff.gz")) {
+			if (output == null || !output.contains("arff.gz")) {
 				System.err.println("If -indexer option is set, the output must be an arff.gz file.");
 				usage();	
 				return false;

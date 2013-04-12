@@ -300,10 +300,15 @@ public class Indexer {
 	 */
 	public Map<String, Double> search(String[] query, String filepath) throws IOException {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
-
+		FileWriter fstream = null;
+		BufferedWriter out = null;
+		boolean writeToFile = filepath == null ? false : true;
+		
 		// Create file 
-		FileWriter fstream = new FileWriter(filepath);
-		BufferedWriter out = new BufferedWriter(fstream);
+		if (writeToFile) {
+			fstream = new FileWriter(filepath);
+			out = new BufferedWriter(fstream);
+		}
 
 		
 		/*HashSet<String> terms = new HashSet<String>(Arrays.asList(query));*/
@@ -354,11 +359,15 @@ public class Indexer {
 		for (String doc : sorted.keySet()) {
 			if (i == 10)
 				break;
-			//System.out.printf("topic1 Q0 %s %d %.2f group1_medium\n", doc, i + 1, sorted.get(doc));
-			out.write("topic1 Q0 " + doc + " " + (i+1) + " " + df.format(sorted.get(doc)) + " group1_medium\n");
+			if (writeToFile) {
+				out.write("topic1 Q0 " + doc + " " + (i+1) + " " + df.format(sorted.get(doc)) + " group1_medium\n");
+			}
+			else {
+				System.out.printf("topic1 Q0 %s %d %.2f group1_medium\n", doc, i + 1, sorted.get(doc));
+			}
 			i++;
 		}
-		out.close();
+		if (writeToFile) out.close();
 		return sorted;
 
 	}
