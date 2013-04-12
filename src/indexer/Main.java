@@ -1,8 +1,6 @@
 package indexer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
+import utils.TRECFormater;
 import args.ArgumentValidator;
 
 
@@ -38,11 +36,9 @@ public class Main {
 			else {
 				query = validator.getQuery().split(" ");
 			}
-			try {
-				idx.search(query, validator);
-			} catch (Exception e) {
-				System.err.println("Cannot write to output: " + validator.getOutput());
-			}
+			
+			TRECFormater.printResult(idx.search(query, validator), validator, 10);
+	
 		}
 		
 		// Both search results should be the same ..

@@ -1,13 +1,10 @@
 package indexer;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -23,11 +20,10 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
 
-import args.ArgumentValidator;
-
 import utils.ARFFWriter;
 import utils.SortThread;
 import utils.Stemmer;
+import args.ArgumentValidator;
 
 public class Indexer {
 	
@@ -310,23 +306,10 @@ public class Indexer {
 	 * 
 	 * @param query
 	 * @param file 
-	 * @throws IOException 
 	 */
-	public Map<String, Double> search(String[] query, ArgumentValidator validator) throws IOException {
+	public Map<String, Double> search(String[] query, ArgumentValidator validator) {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
-		FileWriter fstream = null;
-		BufferedWriter out = null;
-		boolean writeToFile = validator.getOutput() == null ? false : true;
 
-		// Create file 
-		if (writeToFile) {
-			fstream = new FileWriter(validator.getOutput());
-			out = new BufferedWriter(fstream);
-		}
-
-		
-		/*HashSet<String> terms = new HashSet<String>(Arrays.asList(query));*/
-				
 		Stemmer stemmer = new Stemmer();
 		
 		// Compute sources
@@ -365,23 +348,7 @@ public class Indexer {
 		SortedSources ss = new SortedSources(sources);
 		TreeMap<String, Double> sorted = new TreeMap<String, Double>(ss);
 		sorted.putAll(sources);
-		
-		DecimalFormat df = new DecimalFormat();
-		df.setMaximumFractionDigits(2);
-		//System.err.println(doc);
-		int i = 0;
-		for (String doc : sorted.keySet()) {
-			if (i == 10)
-				break;
-			if (writeToFile) {
-				out.write("topic" + validator.getTopicNumber() + " Q0 " + doc + " " + (i+1) + " " + df.format(sorted.get(doc)) + " group1_" + validator.getListSize()+"\n");
-			}
-			else {
-				System.out.printf("topic%d Q0 %s %d %.2f group1_%s\n", validator.getTopicNumber(), doc, i + 1, sorted.get(doc), validator.getListSize());
-			}
-			i++;
-		}
-		if (writeToFile) out.close();
+
 		return sorted;
 
 	}
