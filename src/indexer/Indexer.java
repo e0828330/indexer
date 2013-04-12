@@ -21,6 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
+import args.ArgumentValidator;
+
 import utils.ARFFWriter;
 import utils.SortThread;
 import utils.Stemmer;
@@ -298,15 +300,15 @@ public class Indexer {
 	 * @param file 
 	 * @throws IOException 
 	 */
-	public Map<String, Double> search(String[] query, String filepath) throws IOException {
+	public Map<String, Double> search(String[] query, ArgumentValidator validator) throws IOException {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
 		FileWriter fstream = null;
 		BufferedWriter out = null;
-		boolean writeToFile = filepath == null ? false : true;
-		
+		boolean writeToFile = validator.getOutput() == null ? false : true;
+
 		// Create file 
 		if (writeToFile) {
-			fstream = new FileWriter(filepath);
+			fstream = new FileWriter(validator.getOutput());
 			out = new BufferedWriter(fstream);
 		}
 
@@ -354,16 +356,16 @@ public class Indexer {
 		
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
-		
+		//System.err.println(doc);
 		int i = 0;
 		for (String doc : sorted.keySet()) {
 			if (i == 10)
 				break;
 			if (writeToFile) {
-				out.write("topic1 Q0 " + doc + " " + (i+1) + " " + df.format(sorted.get(doc)) + " group1_medium\n");
+				out.write("topic" + validator.getTopicNumber() + " Q0 " + doc + " " + (i+1) + " " + df.format(sorted.get(doc)) + " group1_" + validator.getListSize()+"\n");
 			}
 			else {
-				System.out.printf("topic1 Q0 %s %d %.2f group1_medium\n", doc, i + 1, sorted.get(doc));
+				System.out.printf("topic%d Q0 %s %d %.2f group1_%s\n", validator.getTopicNumber(), doc, i + 1, sorted.get(doc), validator.getListSize());
 			}
 			i++;
 		}

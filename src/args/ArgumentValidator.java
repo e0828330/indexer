@@ -12,6 +12,11 @@ import org.kohsuke.args4j.Option;
 
 public class ArgumentValidator {
 	
+	public static String SIZE_NONE = "none";
+	public static String SIZE_SMALL = "small";
+	public static String SIZE_MEDIUM = "medium";
+	public static String SIZE_LARGE = "large";
+	
 	private Logger logger = Logger.getLogger(ArgumentValidator.class);
 
 	@Option (name = "-indexer", required = false, usage = "-indexer")
@@ -35,7 +40,12 @@ public class ArgumentValidator {
 	private boolean stemming = false;	
 	
 	private boolean isQueryPath = false;
-
+	
+	private String listSize = ArgumentValidator.SIZE_NONE;
+	
+	@Option (name = "-t", required = false, usage = "[-t X]")
+	private int topicNumber = 0;
+	
 	@Argument
 	private ArrayList<String> all = new ArrayList<>();
 	
@@ -102,6 +112,8 @@ public class ArgumentValidator {
 		logger.debug("Set -i to " + input + ".");
 		logger.debug("Set -o to " + output + ".");
 		logger.debug("Set -q to " + query + ".");
+		logger.debug("Set -lsize to " + listSize + ".");
+		logger.debug("Set -t to " + topicNumber + ".");
 		logger.debug("Query type is " + (this.isQueryPath ? "a path to query document." : "a direct query input."));
 
 		
@@ -169,15 +181,42 @@ public class ArgumentValidator {
 		}
 	}	
 
+	public String getListSize() {
+		return listSize;
+	}
+
+	@Option (name = "-lsize", required = false, usage = "[-lsize (none|small|medium|large)]")	
+	public void setListSize(String listSize) {
+		if (listSize != ArgumentValidator.SIZE_NONE ||
+			listSize != ArgumentValidator.SIZE_SMALL ||
+			listSize != ArgumentValidator.SIZE_MEDIUM ||
+			listSize != ArgumentValidator.SIZE_LARGE) {
+			System.err.println("-lsize not of type (none|small|medium|large). Default set to none.");
+			this.listSize = ArgumentValidator.SIZE_NONE;
+		}
+		this.listSize = listSize;
+	}
+
+	public int getTopicNumber() {
+		return topicNumber;
+	}
+
+	public void setTopicNumber(int topicNumber) {
+		this.topicNumber = topicNumber;
+	}
+
 	private void usage() {
 		System.err.println("This program has the following options:\n" +
 				"[-indexer] : Indexes the collection.\n" +
 				"[-min MIN] : Sets the minimum threshold (default 0).\n" +
 				"[-max MAX] : Sets the maximum threshold (default -1 = unlimited)\n" +
 				"[-stemming] : Enables stemming.\n" + 
+				"[-q (<path>|query)] : The path to the query file or the query itself.\n" +
+				"[-lsize (none|small|medium|large)] :  Sets the list size. (default none)\n" + 
+				"[-t X] : Sets the topic number. (default 0) \n" +
 				"-i <path> : The input path to the collection.\n" +
-				"-o <path> : The output file.\n" +
-				"[-q (<path>|query)] : The path to the query file or the query itself.");
+				"-o <path> : The output file.\n"
+				);
 	}
 	
 	public boolean hasStemming() {

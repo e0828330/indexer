@@ -39,7 +39,7 @@ public class Main {
 				query = validator.getQuery().split(" ");
 			}
 			try {
-				idx.search(query, validator.getOutput());
+				idx.search(query, validator);
 			} catch (Exception e) {
 				System.err.println("Cannot write to output: " + validator.getOutput());
 			}
