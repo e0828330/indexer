@@ -21,6 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.log4j.Logger;
+
 import args.ArgumentValidator;
 
 import utils.ARFFWriter;
@@ -28,6 +30,9 @@ import utils.SortThread;
 import utils.Stemmer;
 
 public class Indexer {
+	
+	// Logger
+	private Logger logger = Logger.getLogger(Indexer.class);
 	
 	// Used for parallel processing
 	private ExecutorService executorService;
@@ -79,6 +84,9 @@ public class Indexer {
 	 */
 	public void buildIndex(String targetDirectory, int minThreshold, int maxThreshold, boolean useStemming) {
 		Long startTime = System.currentTimeMillis();
+		
+		logger.debug("Started indexing process.");
+		
 		this.useStemming = useStemming;		
 
 		executorService = Executors.newFixedThreadPool(maxThreads);
@@ -88,6 +96,8 @@ public class Indexer {
 
 		// Wait for all threads to finish
 		waitForThreads();
+		
+		logger.debug("End of map phase.");
 
 		// Create Posting lists
 		index = new ConcurrentHashMap<String, ArrayList<Posting>>();
@@ -100,6 +110,8 @@ public class Indexer {
 		// Wait for all threads to finish
 		waitForThreads();
 
+		logger.debug("End of reduce phase.");
+		
 		// Build the document vectors
 		documentVectors = new HashMap<String, TreeMap<Integer, Double>>(numDocs, 1.0f);
 		int i = 0;
@@ -112,10 +124,10 @@ public class Indexer {
 			}
 			i++;
 		}
-		
-		System.out.println("Done indexing " + numDocs + " documents in " 
+
+		logger.info("Done indexing " + numDocs + " documents in " 
 							+ (System.currentTimeMillis() - startTime) + "ms ");
-		System.out.println("Number of terms: " + index.size());
+		logger.info("Number of terms: " + index.size());
 	}
 
 	/**
@@ -182,7 +194,7 @@ public class Indexer {
 				writer.endRow();
 			}
 			writer.close();
-			System.out.println("Wrote " + filename);
+			logger.info("Wrote document vectors to " + filename);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -267,7 +279,7 @@ public class Indexer {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Done construcing index from ARFF file in " + (System.currentTimeMillis() - startTime) + "ms ");
+		logger.info("Done construcing index from ARFF file in " + (System.currentTimeMillis() - startTime) + "ms ");
 	}
 
 	/**
