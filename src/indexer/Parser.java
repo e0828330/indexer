@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import utils.Stemmer;
 
 public class Parser implements Runnable {
@@ -14,6 +16,8 @@ public class Parser implements Runnable {
 	private Stemmer stemmer = new Stemmer();
 	private String docId;
 	private boolean useStemming;
+	
+	private Logger logger = Logger.getLogger(Parser.class);
 	
 	/**
 	 * Parser
@@ -48,8 +52,7 @@ public class Parser implements Runnable {
 			out.get(word).add(docId);
 		}
 		} catch (IOException e) {
-			System.err.println("Cannot read file for tokenizer.");
-			// TODO LOG WARN
+			logger.warn("Cannot read file " + filename + " for tokenizer, skipping file!", e);
 		}
 					
 	}
