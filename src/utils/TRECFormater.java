@@ -49,11 +49,14 @@ public class TRECFormater {
 					}
 					i++;
 				}
-				if (writeToFile) out.close();
+				if (writeToFile) {
+					out.close();
+					logger.info("Wrote search results to " + validator.getSearchOut());
+				}
 				
 			}
 			catch (Exception e) {
-				logger.error("Search failed :/");
+				logger.error("Search failed :/", e);
 			}
 		}
 }
