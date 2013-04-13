@@ -218,9 +218,9 @@ public class ArgumentValidator {
 				"[-q (<path>|query)] : The path to the query file or the query itself.\n" +
 				"[-lsize (none|small|medium|large)] :  Sets the list size. (default none)\n" + 
 				"[-t X] : Sets the topic number. (default 0) \n" +
-				"[-searchout <path>] : The search output file." + 
+				"[-searchout <path>] : The search output (TREC) file.\n" + 
 				"-i <path> : The input path to the collection.\n" +
-				"-idxout <path> : The indexer output file.\n"
+				"-idxout <path> : The indexer output file (arff.gz).\n"
 				);
 	}
 	
