@@ -191,9 +191,9 @@ public class ArgumentValidator {
 
 	@Option (name = "-lsize", required = false, usage = "[-lsize (none|small|medium|large)]")	
 	public void setListSize(String listSize) {
-		if (!listSize.equals(ArgumentValidator.SIZE_NONE) ||
-			!listSize.equals(ArgumentValidator.SIZE_SMALL) ||
-			!listSize.equals(ArgumentValidator.SIZE_MEDIUM) ||
+		if (!listSize.equals(ArgumentValidator.SIZE_NONE) &&
+			!listSize.equals(ArgumentValidator.SIZE_SMALL) &&
+			!listSize.equals(ArgumentValidator.SIZE_MEDIUM) &&
 			!listSize.equals(ArgumentValidator.SIZE_LARGE)) {
 			System.err.println("-lsize not of type (none|small|medium|large). Default set to none.");
 			this.listSize = ArgumentValidator.SIZE_NONE;
