@@ -31,8 +31,11 @@ public class ArgumentValidator {
 	@Option (name = "-i",  required = true, usage = "-i <INPUT>")
 	private String input = null;
 	
-	@Option (name = "-o", required = false, usage = "-o <OUTPUTPATH/FILENAME.arff.gz>")	
-	private String output = null;	
+	@Option (name = "-idxout", required = false, usage = "-idxout <OUTPUTPATH/FILENAME.arff.gz>")	
+	private String idxout = null;
+	
+	@Option (name = "-searchout", required = false, usage = "-searchout <OUTPUTPATH/FILENAME.arff.gz>")	
+	private String searchOut = null;		
 	
 	private String query = null;
 	
@@ -95,12 +98,13 @@ public class ArgumentValidator {
 			}
 		}
 		else {
-			if (output == null || !output.contains("arff.gz")) {
-				System.err.println("If -indexer option is set, the output must be an arff.gz file.");
+			if (idxout == null || !idxout.contains("arff.gz")) {
+				System.err.println("Please set the indexer output file (FILE.arff.gz).");
 				usage();	
 				return false;
 			}
 		}
+		
 				
 		
 		// Debug information
@@ -110,7 +114,7 @@ public class ArgumentValidator {
 		logger.debug("Set -max to " + maxThreshold + ".");
 		logger.debug("Set -stemming to " + stemming + ".");
 		logger.debug("Set -i to " + input + ".");
-		logger.debug("Set -o to " + output + ".");
+		logger.debug("Set -idxout to " + idxout + ".");
 		logger.debug("Set -q to " + query + ".");
 		logger.debug("Set -lsize to " + listSize + ".");
 		logger.debug("Set -t to " + topicNumber + ".");
@@ -152,12 +156,12 @@ public class ArgumentValidator {
 		this.input = input;
 	}
 
-	public String getOutput() {
-		return output;
+	public String getIdexOut() {
+		return idxout;
 	}
 
-	public void setOutput(String output) {
-		this.output = output;
+	public void setIdexOut(String output) {
+		this.idxout = output;
 	}
 	
 	
@@ -214,8 +218,9 @@ public class ArgumentValidator {
 				"[-q (<path>|query)] : The path to the query file or the query itself.\n" +
 				"[-lsize (none|small|medium|large)] :  Sets the list size. (default none)\n" + 
 				"[-t X] : Sets the topic number. (default 0) \n" +
+				"[-searchout <path>] : The search output file." + 
 				"-i <path> : The input path to the collection.\n" +
-				"-o <path> : The output file.\n"
+				"-idxout <path> : The indexer output file.\n"
 				);
 	}
 	
@@ -226,6 +231,15 @@ public class ArgumentValidator {
 	public void setStemming(boolean stemming) {
 		this.stemming = stemming;
 	}
+
+	public String getSearchOut() {
+		return searchOut;
+	}
+
+	public void setSearchOut(String searchout) {
+		this.searchOut = searchout;
+	}
+	
 	
 }
 

@@ -26,11 +26,11 @@ public class TRECFormater {
 			try {
 				FileWriter fstream = null;
 				BufferedWriter out = null;
-				boolean writeToFile = validator.getOutput() == null ? false : true;
+				boolean writeToFile = validator.getSearchOut() == null ? false : true;
 				
 				// Create file 
 				if (writeToFile) {
-					fstream = new FileWriter(validator.getOutput());
+					fstream = new FileWriter(validator.getSearchOut());
 					out = new BufferedWriter(fstream);
 				}
 				

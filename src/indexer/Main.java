@@ -21,7 +21,7 @@ public class Main {
 		if (validator.hasIndexer()) {
 			idx.buildIndex(validator.getInput(), validator.getMinThreshold(), 
 					validator.getMaxThreshold(), validator.hasStemming());
-			idx.buildARFF(validator.getOutput());	
+			idx.buildARFF(validator.getIdexOut());	
 		}
 		
 		// Search
@@ -30,8 +30,14 @@ public class Main {
 			// We pass every word of the document as query
 			String[] query = null;
 			if (validator.isQueryPath()) {
-				Tokenizer tk = new Tokenizer(validator.getQuery());
-				query = tk.getTokens();
+				try {
+					Tokenizer tk = new Tokenizer(validator.getQuery());
+					query = tk.getTokens();
+				}
+				catch (Exception e) {
+					System.err.println("Cannot read file");
+					System.exit(1);
+				}
 			}
 			else {
 				query = validator.getQuery().split(" ");

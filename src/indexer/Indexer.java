@@ -205,7 +205,12 @@ public class Indexer {
 	public void readFromARFF(String filename) {
 		Long startTime = System.currentTimeMillis();
 		try {
-			GZIPInputStream gzin = new GZIPInputStream(new FileInputStream(new File(filename)));
+			File f = new File(filename);
+			if (!f.exists()) {
+				System.err.println("ARFF File <" + filename + "> does not exist.");
+				return;
+			}
+			GZIPInputStream gzin = new GZIPInputStream(new FileInputStream(f));
 			BufferedReader reader = new BufferedReader(new InputStreamReader(gzin));
 			String line;
 			
@@ -323,7 +328,7 @@ public class Indexer {
 			}
 
 
-			if (!index.containsKey(term)) {
+			if (index == null || !index.containsKey(term)) {
 				continue;
 			}
 			

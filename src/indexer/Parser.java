@@ -1,6 +1,7 @@
 package indexer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Vector;
 
@@ -30,20 +31,26 @@ public class Parser implements Runnable {
 	
 	@Override
 	public void run() {
-		Tokenizer tk = new Tokenizer(filename);
-		for (String word : tk.getTokens()) {
-			if (word.length() <= 1) {
-				continue; // filter some nonsense
-			}
-			if (useStemming) {
-				word = stem(word);
-			}
-			word = word.toLowerCase();
-			if (!out.containsKey(word)) {
-				out.put(word, new Vector<String>());
+		Tokenizer tk;
+		try {
+			tk = new Tokenizer(filename);
+			for (String word : tk.getTokens()) {
+				if (word.length() <= 1) {
+					continue; // filter some nonsense
+				}
+				if (useStemming) {
+					word = stem(word);
+				}
+				word = word.toLowerCase();
+				if (!out.containsKey(word)) {
+					out.put(word, new Vector<String>());
 			}
 			out.get(word).add(docId);
 		}
+		} catch (IOException e) {
+			System.err.println("Cannot read file for tokenizer.");
+		}
+					
 	}
 
 	/**

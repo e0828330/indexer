@@ -11,8 +11,7 @@ public class Tokenizer {
 	
 	private String buffer;
 	
-	public Tokenizer(String filename) {
-		try {
+	public Tokenizer(String filename) throws IOException {
 			FileInputStream fstream = new FileInputStream(filename);
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -39,13 +38,6 @@ public class Tokenizer {
 				}
 			}
 			br.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public String[] getTokens() {
