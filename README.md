@@ -36,7 +36,10 @@ completely in memory due to its small size).
 
 The index is then used to create a sparse gzip compressed ARFF file. The ARFF 
 file writing has been implemented by hand because WEKA turned out to be 
-significantly slower at doing this task.
+significantly slower at doing this task. In addition to the terms the ARFF
+contains the document class, document id and a flag indicating whether stemming
+has been used or not to create the ARFF file. The later ensures that stemming
+will be used for the search when stemming has been used to create the index.
 
 For the search step the document vectors and the index are rebuild from the ARFF
 file. Sorting of the posting lists is done using multiple threads to speed things
