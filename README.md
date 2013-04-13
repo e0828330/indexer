@@ -12,10 +12,9 @@ The program has the following options:
 [-lsize (none|small|medium|large)] :  Sets the list size. (default none)
 [-t X] : Sets the topic number. (default 0) 
 [-searchout <path>] : The search output (TREC) file.
--i <path> : The input path to the collection.
+-i <path> : Path to the collection or arff.gz containing the index.
 [-idxout <path>] : The indexer output file (arff.gz).
 
-The program needs always an input path to the collection.
 If the program is started without -indexer option, a query is required for the
 search. The query can be a file or a space divided sequence of words like 
 "word1 word2 word3". In search mode, the -searchout option is optional. If
@@ -25,15 +24,20 @@ otherwise it is printed to the console.
 If the -indexer option is set, the program creates the index and needs therefore
 the -idxout option where the generated .arff.gz file is stored.
 
+The -i option points to either the document collection (when in indexing mode)
+otherwise to the arff.gz file that contains a previously created index.
+
 If additionally to the -indexer option a query is given, the search is started
 after the index was created.
 
--lsize is default "none" and sets the listsize for the output to "none", "small", "medium"
-or "large".
+The -lsize and -t options are only used to change the text fiels in the TREC
+output file. The lsize option gives the name of the positing list while the -t
+option gives the topic number. Both have no effect on the algorithms, they are
+just required for the ouput.
 
--t sets the topic number for the output.
 
--min and -max set the threshold for lower and upperbound word occurance.
+-min and -max set the threshold for lower and upperbound term frequency and are
+used by the indexer to implement the frequency thresholding.
 
 -stemming enables stemming.
 
@@ -44,6 +48,11 @@ Sample options for call:
 -min 5 
 -max 30 
 -stemming
+
+The above command will index the document collection "/home/.../20_newsgroups_subset"
+write the index to "/home/.../indexer.arff.gz". The indexer will use stemming
+and a fequency threshold between 5 and 30. The -q will trigger a search once the
+indexing is done.
 
 2. Implementation details
 

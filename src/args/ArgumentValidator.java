@@ -219,7 +219,7 @@ public class ArgumentValidator {
 				"[-lsize (none|small|medium|large)] :  Sets the list size. (default none)\n" + 
 				"[-t X] : Sets the topic number. (default 0) \n" +
 				"[-searchout <path>] : The search output (TREC) file.\n" + 
-				"-i <path> : The input path to the collection.\n" +
+				"-i <path> : Path to the collection or arff.gz containing the index..\n" +
 				"[-idxout <path>] : The indexer output file (arff.gz).\n"
 				);
 	}
