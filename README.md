@@ -2,7 +2,48 @@ Text Indexer & Similarity Retrieval
 
 1. Usage
 
-TBD
+The program has the following options:
+
+[-indexer] : Indexes the collection.
+[-min MIN] : Sets the minimum threshold (default 0).
+[-max MAX] : Sets the maximum threshold (default -1 = unlimited)
+[-stemming] : Enables stemming.
+[-q (<path>|query)] : The path to the query file or the query itself.
+[-lsize (none|small|medium|large)] :  Sets the list size. (default none)
+[-t X] : Sets the topic number. (default 0) 
+[-searchout <path>] : The search output (TREC) file.
+-i <path> : The input path to the collection.
+[-idxout <path>] : The indexer output file (arff.gz).
+
+The program needs always an input path to the collection.
+If the program is started without -indexer option, a query is required for the
+search. The query can be a file or a space divided sequence of words like 
+"word1 word2 word3". In search mode, the -searchout option is optional. If
+-searchout is set, the output for the search is written into the given file,
+otherwise it is printed to the console.
+
+If the -indexer option is set, the program creates the index and needs therefore
+the -idxout option where the generated .arff.gz file is stored.
+
+If additionally to the -indexer option a query is given, the search is started
+after the index was created.
+
+-lsize is default "none" and sets the listsize for the output to "none", "small", "medium"
+or "large".
+
+-t sets the topic number for the output.
+
+-min and -max set the threshold for lower and upperbound word occurance.
+
+-stemming enables stemming.
+
+Sample options for call:
+-i "/home/.../20_newsgroups_subset"  
+-indexer -idxout "/home/.../indexer.arff.gz" 
+-q "windows" 
+-min 5 
+-max 30 
+-stemming
 
 2. Implementation details
 

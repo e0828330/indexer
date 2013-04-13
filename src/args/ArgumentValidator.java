@@ -220,7 +220,7 @@ public class ArgumentValidator {
 				"[-t X] : Sets the topic number. (default 0) \n" +
 				"[-searchout <path>] : The search output (TREC) file.\n" + 
 				"-i <path> : The input path to the collection.\n" +
-				"-idxout <path> : The indexer output file (arff.gz).\n"
+				"[-idxout <path>] : The indexer output file (arff.gz).\n"
 				);
 	}
 	
