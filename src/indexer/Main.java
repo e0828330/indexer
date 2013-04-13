@@ -35,7 +35,7 @@ public class Main {
 					query = tk.getTokens();
 				}
 				catch (Exception e) {
-					System.err.println("Cannot read file");
+					System.err.println("Cannot read query file.");
 					System.exit(1);
 				}
 			}

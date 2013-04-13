@@ -49,6 +49,7 @@ public class Parser implements Runnable {
 		}
 		} catch (IOException e) {
 			System.err.println("Cannot read file for tokenizer.");
+			// TODO LOG WARN
 		}
 					
 	}

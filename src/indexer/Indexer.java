@@ -208,7 +208,7 @@ public class Indexer {
 			File f = new File(filename);
 			if (!f.exists()) {
 				System.err.println("ARFF File <" + filename + "> does not exist.");
-				return;
+				System.exit(1);
 			}
 			GZIPInputStream gzin = new GZIPInputStream(new FileInputStream(f));
 			BufferedReader reader = new BufferedReader(new InputStreamReader(gzin));

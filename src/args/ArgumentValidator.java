@@ -19,27 +19,27 @@ public class ArgumentValidator {
 	
 	private Logger logger = Logger.getLogger(ArgumentValidator.class);
 
-	@Option (name = "-indexer", required = false, usage = "-indexer")
+	@Option (name = "-indexer", required = false)
 	private boolean indexer = false;
 	
-	@Option (name = "-min", required = false, usage = "-min MIN")
+	@Option (name = "-min", required = false)
 	private int minThreshold = 0;
 	
-	@Option (name = "-max", required = false, usage = "-max MAX")
+	@Option (name = "-max", required = false)
 	private int maxThreshold = -1;
 	
-	@Option (name = "-i",  required = true, usage = "-i <INPUT>")
+	@Option (name = "-i",  required = true)
 	private String input = null;
 	
-	@Option (name = "-idxout", required = false, usage = "-idxout <OUTPUTPATH/FILENAME.arff.gz>")	
+	@Option (name = "-idxout", required = false)	
 	private String idxout = null;
 	
-	@Option (name = "-searchout", required = false, usage = "-searchout <OUTPUTPATH/FILENAME.arff.gz>")	
+	@Option (name = "-searchout", required = false)	
 	private String searchOut = null;		
 	
 	private String query = null;
 	
-	@Option (name = "-stemming", required = false, usage = "[-stemming]")
+	@Option (name = "-stemming", required = false)
 	private boolean stemming = false;	
 	
 	private boolean isQueryPath = false;
@@ -83,12 +83,12 @@ public class ArgumentValidator {
 		
 		// Check inputfile if no -index is given
 		if (!indexer) {
-			if (!input.contains("arff.gz")) {
+			if (!input.endsWith("arff.gz")) {
 				System.err.println("Input must be an arff.gz file.");
 				usage();
 				return false;				
 			}
-			if (!input.contains("arff.gz")) {
+			if (!input.endsWith("arff.gz")) {
 				File file = new File(input);
 				if (!file.isFile()) {
 					System.err.println("If -indexer option is not set, a query is required.");
@@ -98,7 +98,7 @@ public class ArgumentValidator {
 			}
 		}
 		else {
-			if (idxout == null || !idxout.contains("arff.gz")) {
+			if (idxout == null || !idxout.endsWith("arff.gz")) {
 				System.err.println("Please set the indexer output file (FILE.arff.gz).");
 				usage();	
 				return false;
