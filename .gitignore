@@ -1,3 +1,4 @@
 *.class
 bin/log4j.properties
 indexer.jar
+.ant-targets-build.xml
