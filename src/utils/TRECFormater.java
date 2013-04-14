@@ -45,7 +45,7 @@ public class TRECFormater {
 						out.write("topic" + validator.getTopicNumber() + " Q0 " + doc + " " + (i+1) + " " + df.format(result.get(doc)) + " group1_" + validator.getListSize()+"\n");
 					}
 					else {
-						System.out.printf("topic%d Q0 %s %d %.2f group1_%s\n", validator.getTopicNumber(), doc, i + 1, result.get(doc), validator.getListSize());
+						System.out.printf("topic%d Q0 %s %d %.2f groupA_%s\n", validator.getTopicNumber(), doc, i + 1, result.get(doc), validator.getListSize());
 					}
 					i++;
 				}

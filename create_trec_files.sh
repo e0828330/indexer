@@ -37,7 +37,7 @@ mkdir -p /tmp/output
 i=1;
 for topic in $topics;
     do
-        out_file="/tmp/output/"$plist_name"_topic"$i"_group1.txt"
+        out_file="/tmp/output/"$plist_name"_topic"$i"_groupA.txt"
         eval "java -jar \"$JAR_PATH/indexer.jar\" -i \"$index_arff\" -t $i -lsize $plist_name -q \"$collection/$topic\" -searchout \"$out_file\"";
         ((i++));
 done;
