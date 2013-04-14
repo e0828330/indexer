@@ -50,6 +50,11 @@ Sample options for call:
 -max 30 
 -stemming
 
+The above command will index the document collection "/home/.../20_newsgroups_subset"
+write the index to "/home/.../indexer.arff.gz". The indexer will use stemming
+and a fequency threshold between 5 and 30. The -q will trigger a search once the
+indexing is done.
+
 Sample1:
 java -jar indexer.jar -indexer -i ../information_retrieval/20_newsgroups_subset -idxout index_large.arff.gz -q "microsoft" -stemming
 
@@ -57,16 +62,8 @@ Sample 2:
 java -jar indexer.jar -indexer -i ../information_retrieval/20_newsgroups_subset -idxout index_large.arff.gz -q "microsoft" -stemming -lsize small -t 1
 
 Sample 3:
-
 java -jar indexer.jar -i index_large.arff.gz -q "microsoft" -searchout out.txt
 
-
-
-
-The above command will index the document collection "/home/.../20_newsgroups_subset"
-write the index to "/home/.../indexer.arff.gz". The indexer will use stemming
-and a fequency threshold between 5 and 30. The -q will trigger a search once the
-indexing is done.
 
 2. Implementation details
 
