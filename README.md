@@ -1,5 +1,7 @@
 Text Indexer & Similarity Retrieval
 
+Java Version: 1.7
+
 1. Usage
 
 The program has the following options:
