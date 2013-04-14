@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -26,11 +27,11 @@ public class TRECFormater {
 			try {
 				FileWriter fstream = null;
 				BufferedWriter out = null;
-				boolean writeToFile = validator.getSearchOut() == null ? false : true;
+				boolean writeToFile = validator.getSearchOut() == null ? false : true; 
 				
 				// Create file 
 				if (writeToFile) {
-					fstream = new FileWriter(validator.getSearchOut());
+					fstream = new FileWriter(new File(validator.getSearchOut()));
 					out = new BufferedWriter(fstream);
 				}
 				
