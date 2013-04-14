@@ -8,10 +8,10 @@
                 <attribute name="Main-Class" value="indexer.Main"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="/home/linux/git/indexer/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/linux/git/indexer/libs/args4j-2.0.21-javadoc.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/linux/git/indexer/libs/args4j-2.0.21.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/linux/git/indexer/libs/log4j-1.2.15.jar"/>
+            <fileset dir="./bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="./libs/args4j-2.0.21-javadoc.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="./libs/args4j-2.0.21.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="./libs/log4j-1.2.15.jar"/>
         </jar>
     </target>
 </project>
