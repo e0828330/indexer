@@ -1,5 +1,7 @@
 package indexer;
 
+import java.util.Locale;
+
 import utils.TRECFormater;
 import args.ArgumentValidator;
 
@@ -7,6 +9,7 @@ import args.ArgumentValidator;
 public class Main {
 
 	public static void main(String[] args) throws InterruptedException {
+		Locale.setDefault(new Locale("en", "US"));		
 		// check arguments
 
 		ArgumentValidator validator = new ArgumentValidator();
