@@ -23,14 +23,13 @@ search. The query can be a file or a space divided sequence of words like
 -searchout is set, the output for the search is written into the given file,
 otherwise it is printed to the console.
 
-If the -indexer option is set, the program creates the index and needs therefore
+If the -indexer option is set, the program creates the index and therefore needs
 the -idxout option where the generated .arff.gz file is stored.
 
 The -i option points to either the document collection (when in indexing mode)
 otherwise to the arff.gz file that contains a previously created index.
 
-If additionally to the -indexer option a query is given, the search is started
-after the index was created.
+If additionally to the -indexer option a query is given, the search is started.
 
 The -lsize and -t options are only used to change the text fiels in the TREC
 output file. The lsize option gives the name of the positing list while the -t
@@ -93,6 +92,9 @@ contains the document class, document id and a flag indicating whether stemming
 has been used or not to create the ARFF file. The later ensures that stemming
 will be used for the search when stemming has been used to create the index.
 
+Stemming has been implemented using the Porter stemmer library: 
+http://www.tartarus.org/~martin/PorterStemmer
+
 For the search step the document vectors and the index are rebuild from the ARFF
 file. Sorting of the posting lists is done using multiple threads to speed things
 up. 
@@ -111,12 +113,14 @@ The 3 ARFF files were generated with the following parameters:
 Set -indexer
 Set -min to 0.
 Set -max to -1.
-Set -stemming
+Set -stemming to false
 Set -i to ../information_retrieval/20_newsgroups_subset.
-Set -o to ../information_retrieval/index_large.arff.gz.
+Set -idxout to ../information_retrieval/index_large.arff.gz.
 Done indexing 8000 documents in 6669ms 
 Number of terms: 130450
 index_large.arff.gz
+
+Cmdline: java -jar indexer.jar -indexer -i ../information_retrieval/20_newsgroups_subset -idxout index_large.arff.gz
 
 
 Set -indexer
@@ -124,10 +128,12 @@ Set -min to 2.
 Set -max to 150.
 Set -stemming to false.
 Set -i to ../information_retrieval/20_newsgroups_subset.
-Set -o to ../information_retrieval/index_medium.arff.gz.
+Set -idxout to ../information_retrieval/index_medium.arff.gz.
 Done indexing 8000 documents in 4989ms 
 Number of terms: 27483
 index_medium.arff.gz
+
+Cmdline: java -jar indexer.jar -indexer -i ../information_retrieval/20_newsgroups_subset -min 2 -max 150 -idxout index_medium.arff.gz
 
 
 Set -indexer
@@ -135,9 +141,17 @@ Set -min to 5.
 Set -max to 10.
 Set -stemming to false.
 Set -i to ../information_retrieval/20_newsgroups_subset.
-Set -o to ../information_retrieval/index_small.arff.gz.
+Set -idxout to ../information_retrieval/index_small.arff.gz.
 Done indexing 8000 documents in 4652ms 
 Number of terms: 5883
 index_small.arff.gz
 
+Cmdline: java -jar indexer.jar -indexer -i ../information_retrieval/20_newsgroups_subset -min 5 -max 10 -idxout index_small.arff.gz
 
+4. TREC files
+
+The files are generated with the following command:
+
+Cmdline: ./create_trec_files.sh ../information_retrieval/20_newsgroups_subset/ index_small.arff.gz small
+Cmdline: ./create_trec_files.sh ../information_retrieval/20_newsgroups_subset/ index_medium.arff.gz medium
+Cmdline: ./create_trec_files.sh ../information_retrieval/20_newsgroups_subset/ index_large.arff.gz large
