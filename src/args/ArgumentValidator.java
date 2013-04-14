@@ -50,7 +50,7 @@ public class ArgumentValidator {
 	private int topicNumber = 0;
 	
 	@Argument
-	private ArrayList<String> all = new ArrayList<>();
+	private ArrayList<String> all = new ArrayList<String>();
 	
 	public boolean validateArgs(String[] args) {
 		
