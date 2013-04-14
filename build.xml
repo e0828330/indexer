@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project indexer">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
+<project default="jar" name="Create Runnable Jar for Project indexer">
+
+     <target name="clean">
+        <delete dir="bin"/>
+        <delete file="indexer.jar" />
+    </target>
+
+    <target name="compile">
+        <mkdir dir="bin"/>
+        <javac srcdir="src" destdir="bin"  includeantruntime="false">
+            <classpath>
+                  <pathelement path="${classpath}"/>
+                  <fileset dir="libs">
+                    <include name="**/*.jar"/>
+                  </fileset>
+            </classpath>
+        </javac>
+        <copy file="src/log4j.properties" todir="bin" />
+    </target>
+
+    <target name="jar" depends="compile">
         <jar destfile="indexer.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="indexer.Main"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="./bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="./libs/args4j-2.0.21.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="./libs/log4j-1.2.15.jar"/>
+            <fileset dir="bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="libs/args4j-2.0.21.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="libs/log4j-1.2.15.jar"/>
         </jar>
     </target>
 </project>
