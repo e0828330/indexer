@@ -1,7 +1,5 @@
 Text Indexer & Similarity Retrieval
 
-Java Version: 1.7
-
 1. Usage
 
 A runnable jar can be created by running 'ant' in the root directory.
