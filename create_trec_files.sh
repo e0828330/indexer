@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JAR_PATH=$HOME
+JAR_PATH=./
 
 # Simple helper script for creating search result files
 #
