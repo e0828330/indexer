@@ -14,8 +14,6 @@ public class Inverter implements Runnable {
 
 	private int maxThreshold;
 	private int minThreshold;
-
-	private int numDocs;
 	
 	/**
 	 * Inverter thread run in the "reduce" phase
@@ -29,14 +27,13 @@ public class Inverter implements Runnable {
 	 */
 	public Inverter(Map<String, Vector<String>> input,
 					Map<String, ArrayList<Posting>> index, String term,
-					int minThreshold, int maxThreshold, int numDocs) {
+					int minThreshold, int maxThreshold) {
 
 		this.term = term;
 		this.input = input;
 		this.index = index;
 		this.minThreshold = minThreshold;
 		this.maxThreshold = maxThreshold;
-		this.numDocs = numDocs;
 	}
 	
 	@Override
@@ -62,12 +59,6 @@ public class Inverter implements Runnable {
 		}
 		
 		if (!result.isEmpty()) {
-			int idf = numDocs / result.size();
-
-			for (Posting p : result) {
-				p.setWeight(Math.log(1 + p.getTf()) * Math.log10(idf));  
-			}
-
 			index.put(term, result);
 		}
 	}

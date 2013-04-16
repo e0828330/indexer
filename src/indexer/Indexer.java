@@ -100,7 +100,7 @@ public class Indexer {
 		executorService = Executors.newFixedThreadPool(maxThreads);
 
 		for(String term : mapOut.keySet()) {
-			executorService.execute(new Inverter(mapOut, index, term, minThreshold, maxThreshold, numDocs));
+			executorService.execute(new Inverter(mapOut, index, term, minThreshold, maxThreshold));
 		}
 
 		// Wait for all threads to finish
