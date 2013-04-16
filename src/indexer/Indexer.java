@@ -116,7 +116,7 @@ public class Indexer {
 				if (!documentVectors.containsKey(p.getDocId())) {
 					documentVectors.put(p.getDocId(), new TreeMap<Integer, Double>());
 				}
-				documentVectors.get(p.getDocId()).put(i, (double) p.getWeight());
+				documentVectors.get(p.getDocId()).put(i, (double) p.getTf());
 			}
 			i++;
 		}
@@ -253,14 +253,14 @@ public class Indexer {
 					for (i = 3; i < attrs.length; i++) {
 						String[] tmp = attrs[i].split(" ");
 						Integer idx = Integer.parseInt(tmp[0]);
-						Double w = Double.parseDouble(tmp[1]);
+						Integer tf = Integer.parseInt(tmp[1]);
 						Posting p = new Posting(docId);
-						p.setWeight(w);
+						p.setTf(tf);
 						index.get(termMap.get(idx)).add(p);
 						if (!documentVectors.containsKey(docId)) {
 							documentVectors.put(docId, new TreeMap<Integer, Double>());
 						}
-						documentVectors.get(docId).put(idx - 3, w);
+						documentVectors.get(docId).put(idx - 3, (double) tf);
 					}
 				}
 			}
