@@ -1,5 +1,8 @@
 Text Indexer & Similarity Retrieval
 
+NOTE: Updated for Exercise 2 to get back the readme for Exercise 1
+      do git reset --hard exercise1
+
 1. Usage
 
 A runnable jar can be created by running 'ant' in the root directory.
@@ -102,6 +105,10 @@ contains the document class, document id and a flag indicating whether stemming
 has been used or not to create the ARFF file. The later ensures that stemming
 will be used for the search when stemming has been used to create the index.
 
+CHANGE FROM EX 1:
+We now store the tf values in the ARFF file because we need them for the LM.
+tf.idf is no longer used.
+
 Stemming has been implemented using the Porter stemmer library: 
 http://www.tartarus.org/~martin/PorterStemmer
 
@@ -109,8 +116,10 @@ For the search step the document vectors and the index are rebuild from the ARFF
 file. Sorting of the posting lists is done using multiple threads to speed things
 up. 
 
-The search itself uses the FASTCOSINESOURCE algorithm from the book (using the 
-td.idf weight) to find the most relevant documents.
+The search uses a LM with Jelinek-­‐Mercer Smoothing. We decided to use this
+instead of Dirichlet Smoothing because we deal with very long queries (we
+have whole documents as input after all). As a consequence of this we also 
+have choosen a small lambda value.
 
 We have just used the whole text of the topic files as input for the search, but
 we do provide an interface for searching using any text (see usage section for
