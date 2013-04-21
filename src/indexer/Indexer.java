@@ -48,6 +48,12 @@ public class Indexer {
 	// Number of tokens
 	private int numTokens;
 	
+	/*
+	 * We use Jelinek-­‐Mercer Smoothing with a small lambda value, because
+	 * we mostly have long queries (whole documents).
+	 */
+	private final double LAMBDA = 0.4;
+	
 	private ConcurrentHashMap<String, Integer> termIdMap = new ConcurrentHashMap<String, Integer>();
 	
 	
@@ -365,8 +371,6 @@ public class Indexer {
 			distinctTerms.add(term);
 		}
 		
-		double lambda = 0.4;
-		
 		// Compute sources
 		for (String doc : documentVectors.keySet()) {
 			TreeMap<Integer, Double> tfList = documentVectors.get(doc);
@@ -397,16 +401,15 @@ public class Indexer {
 					ptd = 0;
 				}
 				if (pd == -1) {
-					pd = lambda * ptd + (1 - lambda) * (double)cf / (double)numTokens;
+					pd = LAMBDA * ptd + (1 - LAMBDA) * (double)cf / (double)numTokens;
 				}
 				else {
-					pd *= lambda * ptd + (1 - lambda) * (double)cf / (double)numTokens;
+					pd *= LAMBDA * ptd + (1 - LAMBDA) * (double)cf / (double)numTokens;
 				}
 			}
-			if (pd == -1) {
-				pd = 0;
+			if (pd != -1) {
+				sources.put(doc, pd);
 			}
-			sources.put(doc, pd);
 		}
 
 		// Sort documents by source to get the top 10
