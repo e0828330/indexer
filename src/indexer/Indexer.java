@@ -365,24 +365,42 @@ public class Indexer {
 			distinctTerms.add(term);
 		}
 		
+		double lambda = 0.4;
+		
 		// Compute sources
 		for (String doc : documentVectors.keySet()) {
 			TreeMap<Integer, Double> tfList = documentVectors.get(doc);
-			int length = tfList.size();
+			int length = 0;
+			for (Double tf : tfList.values()) {
+				length += tf;
+			}
 			double pd = -1;
 			for (String term : distinctTerms) {
 				Integer termId;
+				/* Skip terms that do not exist in the collection */
 				if ((termId = termIdMap.get(term)) == null) {
 					continue;
 				}
 				Double tf;
+				double ptd = -1;
 				if ((tf = tfList.get(termId)) != null) {
-					if (pd == -1) {
-						pd = tf / length;
+					if (ptd == -1) {
+						ptd = tf / length;
+
 					}
 					else {
-						pd *= tf / length;
+						ptd *= tf / length;
 					}
+				}
+				Integer cf = cfMap.get(term);
+				if (ptd == -1) {
+					ptd = 0;
+				}
+				if (pd == -1) {
+					pd = lambda * ptd + (1 - lambda) * (double)cf / (double)numTokens;
+				}
+				else {
+					pd *= lambda * ptd + (1 - lambda) * (double)cf / (double)numTokens;
 				}
 			}
 			if (pd == -1) {
@@ -390,6 +408,7 @@ public class Indexer {
 			}
 			sources.put(doc, pd);
 		}
+
 		// Sort documents by source to get the top 10
 		SortedSources ss = new SortedSources(sources);
 		TreeMap<String, Double> sorted = new TreeMap<String, Double>(ss);

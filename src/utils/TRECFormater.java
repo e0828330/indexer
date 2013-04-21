@@ -35,8 +35,8 @@ public class TRECFormater {
 					out = new BufferedWriter(fstream);
 				}
 				
-				DecimalFormat df = new DecimalFormat();
-				df.setMaximumFractionDigits(2);
+				DecimalFormat df = new DecimalFormat("0.##E0");
+				//df.setMaximumFractionDigits(2);
 
 				int i = 0;
 				for (String doc : result.keySet()) {
@@ -46,7 +46,7 @@ public class TRECFormater {
 						out.write("topic" + validator.getTopicNumber() + " Q0 " + doc + " " + (i+1) + " " + df.format(result.get(doc)) + " group1_" + validator.getListSize()+"\n");
 					}
 					else {
-						System.out.printf("topic%d Q0 %s %d %.2f groupA_%s\n", validator.getTopicNumber(), doc, i + 1, result.get(doc), validator.getListSize());
+						System.out.printf("topic%d Q0 %s %d %s groupA_%s\n", validator.getTopicNumber(), doc, i + 1, df.format(result.get(doc)), validator.getListSize());
 					}
 					i++;
 				}
