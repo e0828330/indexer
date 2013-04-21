@@ -45,6 +45,10 @@ public class Indexer {
 	// Stores collection frequencies for terms
 	private ConcurrentHashMap<String, Integer> cfMap;
 	
+	// Number of tokens
+	private int numTokens;
+	
+	
 	private ArrayList<String> docIds = new ArrayList<String>();
 	private HashSet<String> classes = new HashSet<String>();
 	private int numDocs = 0;
@@ -301,6 +305,12 @@ public class Indexer {
 		}
 		// Wait for all threads to finish
 		waitForThreads();
+
+		numTokens = 0;
+		for (Integer cf : cfMap.values())  {
+			numTokens += cf;
+		}
+		
 	}
 	
 	/**
