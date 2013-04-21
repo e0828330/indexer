@@ -42,6 +42,9 @@ public class Indexer {
 	// Stores the documents as vectors
 	private HashMap<String, TreeMap<Integer, Double>> documentVectors;
 
+	// Stores collection frequencies for terms
+	private ConcurrentHashMap<String, Integer> cfMap;
+	
 	private ArrayList<String> docIds = new ArrayList<String>();
 	private HashSet<String> classes = new HashSet<String>();
 	private int numDocs = 0;
@@ -120,6 +123,8 @@ public class Indexer {
 			}
 			i++;
 		}
+
+		buildCfMap();
 
 		logger.info("Done indexing " + numDocs + " documents in " 
 							+ (System.currentTimeMillis() - startTime) + "ms ");
@@ -275,6 +280,8 @@ public class Indexer {
 			// Wait for all threads to finish
 			waitForThreads();
 			
+			// Build cfMap
+			buildCfMap();
 			
 		}
 		catch (IOException e) {
@@ -283,6 +290,19 @@ public class Indexer {
 		logger.info("Done construcing index from ARFF file in " + (System.currentTimeMillis() - startTime) + "ms ");
 	}
 
+	/**
+	 * Computes the collection frequency for each term
+	 */
+	private void buildCfMap() {
+		cfMap = new ConcurrentHashMap<String, Integer>();
+		executorService = Executors.newFixedThreadPool(maxThreads);
+		for (String term : index.keySet()) {
+			executorService.execute(new CollectionFrequencyBuilder(cfMap, index.get(term), term));
+		}
+		// Wait for all threads to finish
+		waitForThreads();
+	}
+	
 	/**
 	 * This is used for sorting the top 10 documents
 	 */
