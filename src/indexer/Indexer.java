@@ -375,6 +375,7 @@ public class Indexer {
 		for (String doc : documentVectors.keySet()) {
 			TreeMap<Integer, Double> tfList = documentVectors.get(doc);
 			int length = 0;
+			/* Get document length (sum of tf values) */
 			for (Double tf : tfList.values()) {
 				length += tf;
 			}
@@ -385,6 +386,8 @@ public class Indexer {
 				if ((termId = termIdMap.get(term)) == null) {
 					continue;
 				}
+				
+				/* Compute P(t|M_d) */
 				Double tf;
 				double ptd = -1;
 				if ((tf = tfList.get(termId)) != null) {
@@ -396,6 +399,8 @@ public class Indexer {
 						ptd *= tf / length;
 					}
 				}
+				
+				/* Compute P(t|M_c) */
 				Integer cf = cfMap.get(term);
 				if (ptd == -1) {
 					ptd = 0;
@@ -407,6 +412,7 @@ public class Indexer {
 					pd *= LAMBDA * ptd + (1 - LAMBDA) * (double)cf / (double)numTokens;
 				}
 			}
+
 			if (pd != -1) {
 				sources.put(doc, pd);
 			}
