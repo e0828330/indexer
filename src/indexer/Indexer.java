@@ -48,6 +48,8 @@ public class Indexer {
 	// Number of tokens
 	private int numTokens;
 	
+	private ConcurrentHashMap<String, Integer> termIdMap = new ConcurrentHashMap<String, Integer>();
+	
 	
 	private ArrayList<String> docIds = new ArrayList<String>();
 	private HashSet<String> classes = new HashSet<String>();
@@ -125,6 +127,7 @@ public class Indexer {
 				}
 				documentVectors.get(p.getDocId()).put(i, (double) p.getTf());
 			}
+			termIdMap.put(term, i);
 			i++;
 		}
 
@@ -225,8 +228,9 @@ public class Indexer {
 			
 			// Initialize maps
 			index = new ConcurrentHashMap<String, ArrayList<Posting>>();
-			HashMap<Integer, String> termMap = new HashMap<Integer, String>();
 			documentVectors = new HashMap<String, TreeMap<Integer, Double>>();
+			HashMap<Integer, String> termMap = new HashMap<Integer, String>();
+			
 			
 			boolean inData = false; 
 			int  i = 3;
@@ -238,6 +242,7 @@ public class Indexer {
 						String term = tmp[1].substring(1, tmp[1].length() - 1);
 						index.put(term, new ArrayList<Posting>());
 						termMap.put(i, term);
+						termIdMap.put(term, i);
 						i++;
 					}
 				}
@@ -344,10 +349,10 @@ public class Indexer {
 	 */
 	public Map<String, Double> search(String[] query, ArgumentValidator validator) {
 		HashMap<String, Double> sources = new HashMap<String, Double>();
+		HashSet<String> distinctTerms = new HashSet<String>();
 
 		Stemmer stemmer = new Stemmer();
-		
-		// Compute sources
+
 		for (String term : query) {
 			term = term.toLowerCase();
 
@@ -356,29 +361,35 @@ public class Indexer {
 				stemmer.stem();
 				term = stemmer.toString();
 			}
-
-
-			if (index == null || !index.containsKey(term)) {
-				continue;
-			}
 			
-			for (Posting p : index.get(term)) {
-				double value = 0.;
-				if (sources.containsKey(p.getDocId())) {
-					value = sources.get(p.getDocId());
+			distinctTerms.add(term);
+		}
+		
+		// Compute sources
+		for (String doc : documentVectors.keySet()) {
+			TreeMap<Integer, Double> tfList = documentVectors.get(doc);
+			int length = tfList.size();
+			double pd = -1;
+			for (String term : distinctTerms) {
+				Integer termId;
+				if ((termId = termIdMap.get(term)) == null) {
+					continue;
 				}
-				value += p.getWeight();
-				sources.put(p.getDocId(), value);
+				Double tf;
+				if ((tf = tfList.get(termId)) != null) {
+					if (pd == -1) {
+						pd = tf / length;
+					}
+					else {
+						pd *= tf / length;
+					}
+				}
 			}
-		}
-
-		// Normalize sources
-		for (String docId : sources.keySet()) {
-			if (sources.containsKey(docId)) {
-				sources.put(docId, sources.get(docId) / documentVectors.get(docId).size());
+			if (pd == -1) {
+				pd = 0;
 			}
+			sources.put(doc, pd);
 		}
-
 		// Sort documents by source to get the top 10
 		SortedSources ss = new SortedSources(sources);
 		TreeMap<String, Double> sorted = new TreeMap<String, Double>(ss);
