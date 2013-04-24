@@ -6,7 +6,7 @@
         <delete file="indexer.jar" />
     </target>
 
-    <target name="compile">
+    <target name="compile" depends="clean">
         <mkdir dir="bin"/>
         <javac srcdir="src" destdir="bin"  includeantruntime="false">
             <classpath>
