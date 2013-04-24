@@ -203,7 +203,7 @@ public class Indexer {
 				for (Integer idx : list.keySet()) {
 					// The first tree entries are class, name and the stemming attributes, so we have
 					// to add 3 to the index
-					writer.addDoubleValue(false, idx + 3, list.get(idx));
+					writer.addNumericValue(false, idx + 3, list.get(idx).intValue());
 				}
 				writer.endRow();
 			}
@@ -273,7 +273,7 @@ public class Indexer {
 					for (i = 3; i < attrs.length; i++) {
 						String[] tmp = attrs[i].split(" ");
 						Integer idx = Integer.parseInt(tmp[0]);
-						Integer tf = Integer.parseInt(tmp[1]);
+						Integer tf = new Double(tmp[1]).intValue();
 						Posting p = new Posting(docId);
 						p.setTf(tf);
 						index.get(termMap.get(idx)).add(p);
@@ -386,11 +386,14 @@ public class Indexer {
 				if ((termId = termIdMap.get(term)) == null) {
 					continue;
 				}
-				
+
+
+
 				/* Compute P(t|M_d) */
 				Double tf;
 				double ptd = -1;
 				if ((tf = tfList.get(termId)) != null) {
+
 					if (ptd == -1) {
 						ptd = tf / length;
 

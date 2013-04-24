@@ -125,23 +125,7 @@ We have just used the whole text of the topic files as input for the search, but
 we do provide an interface for searching using any text (see usage section for
  details).
 
-3. Output files
-
-The index has been generated with the following parameters:
-
-Set -indexer
-Set -min to 0.
-Set -max to -1.
-Set -stemming to false
-Set -i to ../information_retrieval/20_newsgroups_subset.
-Set -idxout to ../information_retrieval/index_large.arff.gz.
-Done indexing 8000 documents in 6669ms 
-Number of terms: 130450
-index_large.arff.gz
-
-Cmdline: java -jar indexer.jar -indexer -i ../information_retrieval/20_newsgroups_subset -idxout index_large.arff.gz
-
-4. TREC files
+3. TREC files
 
 The files are generated with the following command:
 
