@@ -248,7 +248,7 @@ public class Indexer {
 						String term = tmp[1].substring(1, tmp[1].length() - 1);
 						index.put(term, new ArrayList<Posting>());
 						termMap.put(i, term);
-						termIdMap.put(term, i);
+						termIdMap.put(term, i - 3);
 						i++;
 					}
 				}
