@@ -46,7 +46,7 @@ used by the indexer to implement the frequency thresholding.
 -stemming enables stemming.
 
 Sample options for call:
--i "/home/.../20_newsgroups_subset"  
+-i "/home/.../20_newsgroups_subset"
 -indexer -idxout "/home/.../indexer.arff.gz" 
 -q "windows" 
 -min 5 
@@ -125,7 +125,12 @@ We have just used the whole text of the topic files as input for the search, but
 we do provide an interface for searching using any text (see usage section for
  details).
 
-3. TREC files
+3. Index
+The index has been created using:
+
+Cmdline: java -jar indexer.jar -indexer -i ../information_retrieval/20_newsgroups_subset/ -idxout index_large.arff.gz
+
+4. TREC files
 
 The files are generated with the following command:
 
