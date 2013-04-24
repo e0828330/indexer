@@ -52,7 +52,7 @@ public class Indexer {
 	 * We use Jelinek-­‐Mercer Smoothing with a small lambda value, because
 	 * we mostly have long queries (whole documents).
 	 */
-	private final double LAMBDA = 0.4;
+	private final double LAMBDA = 0.2;
 	
 	private ConcurrentHashMap<String, Integer> termIdMap = new ConcurrentHashMap<String, Integer>();
 	
