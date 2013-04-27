@@ -119,7 +119,7 @@ up.
 The search uses a LM with Jelinek-­‐Mercer Smoothing. We decided to use this
 instead of Dirichlet Smoothing because we deal with very long queries (we
 have whole documents as input after all). As a consequence of this we also 
-have choosen a small lambda value.
+have choosen a small lambda value (0.2).
 
 We have just used the whole text of the topic files as input for the search, but
 we do provide an interface for searching using any text (see usage section for
