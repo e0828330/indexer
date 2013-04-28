@@ -119,7 +119,11 @@ up.
 The search uses a LM with Jelinek-­‐Mercer Smoothing. We decided to use this
 instead of Dirichlet Smoothing because we deal with very long queries (we
 have whole documents as input after all). As a consequence of this we also 
-have choosen a small lambda value (0.2).
+have choosen a small lambda value (0.2). Because the values can end up being very
+small (and overflow Java's double data type) we multiply each multiplicand by
+1000. This has the effect that the source are no longer real percent values
+but the relation between sources stay the same. We could in theory use BigDecimal
+instead of double but this would come with a huge performance hit.
 
 We have just used the whole text of the topic files as input for the search, but
 we do provide an interface for searching using any text (see usage section for

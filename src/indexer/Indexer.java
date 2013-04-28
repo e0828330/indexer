@@ -395,11 +395,11 @@ public class Indexer {
 				if ((tf = tfList.get(termId)) != null) {
 
 					if (ptd == -1) {
-						ptd = tf / length;
+						ptd = tf / length * 1000;
 
 					}
 					else {
-						ptd *= tf / length;
+						ptd *= tf / length * 1000;
 					}
 				}
 				
@@ -409,10 +409,10 @@ public class Indexer {
 					ptd = 0;
 				}
 				if (pd == -1) {
-					pd = LAMBDA * ptd + (1 - LAMBDA) * (double)cf / (double)numTokens;
+					pd = LAMBDA * ptd + (1 - LAMBDA) * (double)cf / (double)numTokens * 1000;
 				}
 				else {
-					pd *= LAMBDA * ptd + (1 - LAMBDA) * (double)cf / (double)numTokens;
+					pd *= LAMBDA * ptd + (1 - LAMBDA) * (double)cf / (double)numTokens * 1000;
 				}
 			}
 
